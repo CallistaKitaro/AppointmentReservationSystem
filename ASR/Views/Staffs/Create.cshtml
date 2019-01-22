@@ -1,7 +1,12 @@
 ﻿@model ASR.Models.Staff
 
 @{
-    ViewData["Title"] = "Create";
+    //ViewData["Title"] = "Create";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @Html.Partial("_StaffPartialView")
 }
 
 <h2>Create</h2>

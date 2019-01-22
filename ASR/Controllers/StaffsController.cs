@@ -18,8 +18,14 @@ namespace ASR.Controllers
             _context = context;
         }
 
+        // GET: Show Staff homepage
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         // GET: Staffs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> ListStaffs()
         {
             return View(await _context.Staff.ToListAsync());
         }

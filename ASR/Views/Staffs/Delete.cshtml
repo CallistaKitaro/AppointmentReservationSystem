@@ -1,7 +1,12 @@
 ﻿@model ASR.Models.Staff
 
 @{
-    ViewData["Title"] = "Delete";
+    //ViewData["Title"] = "Delete";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @Html.Partial("_StaffPartialView")
 }
 
 <h2>Delete</h2>
@@ -30,7 +35,7 @@
             @Html.DisplayFor(model => model.Email)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="StaffID" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
