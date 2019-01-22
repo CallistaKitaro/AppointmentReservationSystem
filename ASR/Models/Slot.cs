@@ -9,18 +9,20 @@ namespace ASR.Models
 {
     public class Slot
     {
-        [Column("RoomName")]
+        [Column("RoomID")]
         [Required]
-        [Display(Name = "Room name")]
+        [Display(Name = "Room Name")]
         public string RoomID { get; set; }
         
         public virtual Room Room { get; set; }
 
-        [Display(Name = "Start time")]
+        [Display(Name = "Date")]
+        [DataType(DataType.Date)]
+        [Column("StartTime")]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime StartTime { get; set; }
-
+        
         [Required]
-        [RegularExpression(@"^(e|E)\\d{5}$", ErrorMessage = "Invalid staff ID")]
         public string StaffID { get; set; }
         
         public virtual Staff Staff { get; set; }

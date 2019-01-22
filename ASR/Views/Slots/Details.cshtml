@@ -14,7 +14,19 @@
             @Html.DisplayNameFor(model => model.Room)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Room.RoomID)
+            @Html.DisplayFor(model => model.Room.RoomName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt>
+            Time
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartTime.TimeOfDay)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Staff)
@@ -31,6 +43,6 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { RoomId = Model.RoomID , StartTime = Model.StartTime}) |
     <a asp-action="Index">Back to List</a>
 </div>

@@ -15,19 +15,19 @@
             @Html.DisplayNameFor(model => model.Room)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Room.RoomID)
+            @Html.DisplayFor(model => model.Room.RoomName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartTime.Date)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Staff)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Staff.StaffID)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Student)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Student.StudentID)
         </dd>
     </dl>
     

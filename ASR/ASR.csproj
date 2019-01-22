@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190121111018_timeSpan.cs" />
+    <Compile Remove="Migrations\20190121111018_timeSpan.Designer.cs" />
+    <Compile Remove="Migrations\20190121111537_reverting.cs" />
+    <Compile Remove="Migrations\20190121111537_reverting.Designer.cs" />
+    <Compile Remove="Migrations\20190121114906_revert.cs" />
+    <Compile Remove="Migrations\20190121114906_revert.Designer.cs" />
+    <Compile Remove="Migrations\20190121115619_removeSlot.cs" />
+    <Compile Remove="Migrations\20190121115619_removeSlot.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.7" PrivateAssets="All" />
