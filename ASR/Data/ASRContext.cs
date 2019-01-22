@@ -28,7 +28,7 @@ namespace ASR.Models
         {
             builder.Entity<Slot>().HasKey(slot => new { slot.RoomID, slot.StartTime });
         }
-        
+
 
     }
 }

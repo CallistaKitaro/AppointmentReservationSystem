@@ -4,14 +4,16 @@ using ASR.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ASR.Migrations
 {
     [DbContext(typeof(ASRContext))]
-    partial class ASRContextModelSnapshot : ModelSnapshot
+    [Migration("20190121232634_SlotRoomID")]
+    partial class SlotRoomID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +56,7 @@ namespace ASR.Migrations
             modelBuilder.Entity("ASR.Models.Slot", b =>
                 {
                     b.Property<string>("RoomID")
-                        .HasColumnName("RoomID");
+                        .HasColumnName("RoomName");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnName("StartTime");
