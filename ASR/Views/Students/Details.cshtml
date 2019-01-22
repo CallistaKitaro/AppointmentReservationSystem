@@ -2,9 +2,14 @@
 
 @{
     ViewData["Title"] = "Details";
+    Layout = "_Layout";
 }
 
-<h2>Details</h2>
+@section navigation{
+    @Html.Partial("_StudentPartialView")
+}
+
+<h2>Student's Details</h2>
 
 <div>
     <h4>Student</h4>

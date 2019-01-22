@@ -24,6 +24,12 @@ namespace ASR.Controllers
             return View(await _context.Room.ToListAsync());
         }
 
+        // GET: Rooms
+        public async Task<IActionResult> RoomAvailability()
+        {
+            return View(await _context.Room.ToListAsync());
+        }
+
         // GET: Rooms/Details/5
         public async Task<IActionResult> Details(string id)
         {

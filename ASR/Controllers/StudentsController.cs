@@ -18,8 +18,14 @@ namespace ASR.Controllers
             _context = context;
         }
 
-        // GET: Students
+        // Show Student Homepage
         public async Task<IActionResult> Index()
+        {
+            return View();
+        }
+
+        // GET: Students
+        public async Task<IActionResult> ListStudents()
         {
             return View(await _context.Student.ToListAsync());
         }
