@@ -12,10 +12,5 @@ namespace ASR.Controllers
         {
             return View();
         }
-
-        public IActionResult Faq()
-        {
-            return View();
-        }
     }
 }
