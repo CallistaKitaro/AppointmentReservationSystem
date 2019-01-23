@@ -31,6 +31,14 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Faq">FAQ</a></li>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("staff"))
+                    {
+                        <li><a asp-area="" asp-controller="Staff" asp-action="Index">Staff</a></li>
+                    }
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("student"))
+                    {
+                        <li><a asp-area="" asp-controller="Student" asp-action="Index">Student</a></li>
+                    }
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
