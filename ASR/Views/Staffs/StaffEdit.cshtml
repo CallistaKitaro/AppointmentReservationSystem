@@ -1,12 +1,12 @@
 ﻿@model ASR.Models.Staff
 
 @{
-    //ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit";
     Layout = "_Layout";
 }
 
 @section navigation{
-    @Html.Partial("_StaffPartialView")
+    @await Html.PartialAsync("_StaffPartialView")
 }
 
 <h2>Edit</h2>

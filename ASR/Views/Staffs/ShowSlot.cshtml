@@ -1,0 +1,54 @@
+﻿@model IEnumerable<ASR.Models.Slot>
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @await Html.PartialAsync("_StaffPartialView");
+}
+
+<h2>Slot List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Room)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Room.RoomName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Staff.StaffID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.StudentID)
+                </td>
+                <td>                 
+                    @Html.ActionLink("Delete", "SlotDelete", new { RoomId = item.RoomID, StartTime = item.StartTime })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

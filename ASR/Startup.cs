@@ -37,11 +37,18 @@ namespace ASR
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(
             //        Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ASRContext>();
-
+            
+          
             services.AddDbContext<ASRContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ASRContext")));
+
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<ASRContext>();
+            
+            //services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
+            //{
+
+            //});
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -64,7 +71,7 @@ namespace ASR
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

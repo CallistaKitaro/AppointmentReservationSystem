@@ -12,12 +12,12 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a asp-area="" asp-controller="Staffs" asp-action="ListStaffs">List Staffs</a></li>
+                <li><a asp-area="" asp-controller="Staffs" asp-action="ListStaffs">List Schedules</a></li>
                 <li><a asp-area="" asp-controller="Rooms" asp-action="RoomAvailability">View Room Availability</a></li>
-                <li><a asp-area="" asp-controller="Staffs" asp-action="Create">Create a Slot</a></li>
-                <li><a asp-area="" asp-controller="Staffs" asp-action="Delete">Remove a Slot</a></li>
+                <li><a asp-area="" asp-controller="Staffs" asp-action="SlotCreate">Create a Slot</a></li>
+                <li><a asp-area="" asp-controller="Staffs" asp-action="ShowSlot">Remove a Slot</a></li>
             </ul>
-            <!--<partial name="_LoginPartial" />-->
+            <partial name="_LoginPartial" />
         </div>
     </div>
 </nav>

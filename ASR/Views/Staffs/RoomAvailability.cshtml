@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ASR.Models.Room>
+
+@{
+    //ViewData["Title"] = "RoomAvailability";
+    Layout = "_Layout";
+}
+
+@section navigation{ 
+    @Html.Partial("_StaffPartialView")
+}
+
+<h2>Room Availability</h2>
+
+<form>
+    <p>
+        Input Date: <input type="date" asp-for="SearchDate" />
+        <input type="Submit" value="filter" />
+    </p>
+
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomName)
+                </td>         
+            </tr>
+        }
+    </tbody>
+
+</table>
+

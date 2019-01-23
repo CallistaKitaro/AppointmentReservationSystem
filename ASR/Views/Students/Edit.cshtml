@@ -1,12 +1,12 @@
 ﻿@model ASR.Models.Student
 
 @{
-    //ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit";
     Layout = "_Layout";
 }
 
 @section navigation{
-    @Html.Partial("_StudentPartialView")
+    @await Html.PartialAsync("_StudentPartialView")
 }
 
 <h4>Edit Student</h4>

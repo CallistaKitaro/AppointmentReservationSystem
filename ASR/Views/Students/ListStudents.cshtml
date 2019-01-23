@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<ASR.Models.Student>
 
 @{
-    //ViewData["Title"] = "ListStudents";
+    ViewData["Title"] = "ListStudents";
     Layout = "_Layout";
 }
 
 @section navigation{
-    @Html.Partial("_StudentPartialView")
+    @await Html.PartialAsync("_StudentPartialView")
 }
 
 <h2>List Students</h2>

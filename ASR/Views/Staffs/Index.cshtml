@@ -1,10 +1,10 @@
 ﻿@{
-    //ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
 
 @section navigation{
-    @Html.Partial("_StaffPartialView")
+    @await Html.PartialAsync("_StaffPartialView")
 }
 
 <h2>Staff Homepage</h2>

@@ -1,0 +1,45 @@
+﻿@model ASR.Models.Slot
+
+@{
+    ViewData["Title"] = "SlotDeleteConfirm";
+    Layout = "_Layout";
+}
+
+@section  Navigation{ 
+    @await Html.PartialAsync("_StaffPartialView");
+}
+
+<h2>Slot Delete Confirm</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Slot</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Room)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Room.RoomName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartTime.Date)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Staff)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Staff.StaffID)
+        </dd>
+    </dl>
+
+    <form asp-action="SlotDelete">
+        <input type="hidden" asp-for="RoomID" />
+        <input type="hidden" asp-for="StartTime" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="ShowSlot">Back to List</a>
+    </form>
+</div>

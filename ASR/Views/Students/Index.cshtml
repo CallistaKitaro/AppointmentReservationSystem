@@ -1,11 +1,11 @@
 ﻿
 @{
-    //ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
 
 @section navigation{ 
-    @Html.Partial("_StudentPartialView")
+    @await Html.PartialAsync("_StudentPartialView")
 }
 
 <h2>Student Homepage</h2>

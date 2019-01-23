@@ -1,7 +1,7 @@
 ﻿
 @{
-    //ViewData["Title"] = "StudentView";
+    ViewData["Title"] = "StudentView";
     Layout = "_Layout";
 }
 
-@Html.Partial("_StudentPartialView")
+@await Html.PartialAsync("_StudentPartialView")
