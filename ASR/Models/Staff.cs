@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ASR.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace ASR.Models
 {
+    [Authorize(Roles = Constants.StaffRole)]
     public class Staff
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

@@ -10,12 +10,16 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
+using ASR.Data;
 
 namespace ASR.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
+        private readonly ASRContext _context;
+
         private readonly SignInManager<AccountUser> _signInManager;
         private readonly UserManager<AccountUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
@@ -25,12 +29,14 @@ namespace ASR.Areas.Identity.Pages.Account
             UserManager<AccountUser> userManager,
             SignInManager<AccountUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ASRContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -40,6 +46,17 @@ namespace ASR.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            [Required]
+            [Display(Name = "User ID")]
+            public string UserID { get; set; }
+
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -67,31 +84,93 @@ namespace ASR.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new AccountUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                // Ensure only valid id with valid email can register
+                Regex staffIDRegex = new Regex("^(e|E)\\d{5}$");
+                Regex studentIDRegex = new Regex("^(s|S)\\d{7}$");
+                Regex staffEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@rmit.edu.au");
+                Regex studentEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@student.rmit.edu.au");
+
+                if (staffIDRegex.IsMatch(Input.UserID) || studentIDRegex.IsMatch(Input.UserID))
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    if (staffIDRegex.IsMatch(Input.UserID) && !staffEmailRegex.IsMatch(Input.Email))
+                    {
+                        ModelState.AddModelError("", "Invalid staff email");
+                        return Page();
+                    }
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { userId = user.Id, code = code },
-                        protocol: Request.Scheme);
+                    if (studentIDRegex.IsMatch(Input.UserID) && !studentEmailRegex.IsMatch(Input.Email))
+                    {
+                        ModelState.AddModelError("", "Invalid student email");
+                        return Page();
+                    }
+                    
+                    var user = new AccountUser { UserName = Input.Email, Email = Input.Email };
+                    var result = await _userManager.CreateAsync(user, Input.Password);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    if (staffEmailRegex.IsMatch(user.UserName))
+                    {
+                        await _userManager.AddToRoleAsync(user, Constants.StaffRole);
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                        var staff = new Staff
+                        {
+                            StaffID = Input.UserID,
+                            FirstName = Input.FirstName,
+                            LastName = Input.LastName,
+                            Email = Input.Email,
+                        };
+                        _context.Add(staff);
+                        await _context.SaveChangesAsync();
+                    }
+                    else if (studentEmailRegex.IsMatch(user.UserName))
+                    {
+                        await _userManager.AddToRoleAsync(user, Constants.StudentRole);
+
+                        var student = new Student
+                        {
+                            StudentID = Input.UserID,
+                            FirstName = Input.FirstName,
+                            LastName = Input.LastName,
+                            Email = Input.Email,
+                        };
+                        _context.Add(student);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+
+
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("User created a new account with password.");
+
+                        //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        //    var callbackUrl = Url.Page(
+                        //        "/Account/ConfirmEmail",
+                        //        pageHandler: null,
+                        //        values: new { userId = user.Id, code = code },
+                        //        protocol: Request.Scheme);
+
+                        //    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        //        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
                 }
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError("", "Invalid user ID");
+                    return Page();
                 }
             }
-
+            
             // If we got this far, something failed, redisplay form
             return Page();
         }

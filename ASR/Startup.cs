@@ -40,10 +40,10 @@ namespace ASR
             //        Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ASRContext>();
-
+            
 
             //Simplify registration password
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<AccountUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 3;
                 options.Password.RequireDigit = options.Password.RequireNonAlphanumeric =
@@ -57,8 +57,7 @@ namespace ASR
                 googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             });
 
-
-
+            
             services.AddDbContext<ASRContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ASRContext")));
 

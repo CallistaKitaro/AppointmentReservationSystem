@@ -15,8 +15,7 @@ namespace ASR.Models
         {
         }
         
-
-
+        
         public DbSet<ASR.Models.Room> Room { get; set; }
 
         public DbSet<ASR.Models.Staff> Staff { get; set; }
