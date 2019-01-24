@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ASR.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ASR
 {
@@ -37,20 +38,31 @@ namespace ASR
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(
             //        Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDefaultIdentity<IdentityUser>()
+            //    .AddEntityFrameworkStores<ASRContext>();
             
-          
+
+            //Simplify registration password
+            services.AddIdentity<AccountUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireDigit = options.Password.RequireNonAlphanumeric =
+                    options.Password.RequireUppercase = options.Password.RequireLowercase = false;
+            }).AddDefaultUI().AddEntityFrameworkStores<ASRContext>();
+
+
+            services.AddAuthentication().AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+            });
+
+            
             services.AddDbContext<ASRContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ASRContext")));
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ASRContext>();
-            
-            //services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
-            //{
-
-            //});
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,7 +81,7 @@ namespace ASR
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+            app.UseCookiePolicy(); 
 
             app.UseAuthentication();
 

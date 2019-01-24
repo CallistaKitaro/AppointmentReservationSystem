@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ASR.Data;
+using Microsoft.AspNetCore.Authorization;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace ASR.Models
 {
+    [Authorize(Roles = Constants.StudentRole)]
     public class Student
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -17,8 +20,7 @@ namespace ASR.Models
         [Required]
         [Display(Name = "First name")]
         public string FirstName { get; set; }
-
-        [Required]
+        
         [Display(Name = "Last name")]
         public string LastName { get; set; }
 
