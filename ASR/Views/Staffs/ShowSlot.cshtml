@@ -46,7 +46,7 @@
                     @Html.DisplayFor(modelItem => item.Student.StudentID)
                 </td>
                 <td>                 
-                    @Html.ActionLink("Delete", "SlotDelete", new { RoomId = item.RoomID, StartTime = item.StartTime })
+                    @Html.ActionLink("Delete", "SlotDelete", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
                 </td>
             </tr>
         }

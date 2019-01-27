@@ -36,8 +36,7 @@ namespace ASR_Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSlot(string roomid, string startTime)
         {
-            var slotTime = DateTime.ParseExact(startTime, "dd/MM/yyyy HH:mm", null, DateTimeStyles.None);
-            var slot1 = await _context.Slot.FindAsync(roomid, slotTime);
+            var slotTime = DateTime.ParseExact(startTime, "dd/MM/yyyy HH:mm", null, DateTimeStyles.None);        
             var slot = await _context.Slot
                         .Include(s => s.Room)
                         .Include(s => s.Staff)
@@ -47,8 +46,7 @@ namespace ASR_Api.Controllers
             if (slot == null)
             {
                 return NotFound();
-            }
-            
+            }        
             return Ok(slot);
         }
 

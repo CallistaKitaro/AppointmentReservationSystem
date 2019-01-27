@@ -11,6 +11,9 @@ using ASR.Models;
 using ASR.Data;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Text;
+using System.Net;
+
 
 namespace ASR.Controllers
 {
@@ -37,32 +40,13 @@ namespace ASR.Controllers
             ViewBag.id = id;
             var staffId = id.Substring(0, 6);
 
-            Staff staff = new Staff();
-
-            using(var client = new HttpClient())
-            {
-                //Parsing service base url
-                client.BaseAddress = new Uri(baseUrl);
-                client.DefaultRequestHeaders.Clear();
-
-                //Sending request to web api
-                HttpResponseMessage req = await client.GetAsync($"Staff/{staffId}");
-
-                //Checking the response is successful or not
-                if (req.IsSuccessStatusCode)
-                {
-                    //Storing the response detail received from web api
-                    var StaffResp = req.Content.ReadAsStringAsync().Result;
-
-                    //Deserialize the response received from web api and storing to slot list
-                    staff = JsonConvert.DeserializeObject<Staff>(StaffResp);
-                }
-            }
+            //Get staff
+            Staff staff = await GetStaff(staffId);
             if (staff == null)
             {
                 return NotFound();
             }
-        
+
             return View(staff);
         }
 
@@ -76,7 +60,9 @@ namespace ASR.Controllers
 
             ViewBag.id = id;
             var staffId = id.Substring(0, 6);
-
+            Staff staff = await GetStaff(staffId);
+            ViewBag.StaffName = $"{staff.FirstName} {staff.LastName}";
+            
             //Call All staff's slot from ASR web api
             List<Slot> staffSlots = new List<Slot>();          
             using (var client = new HttpClient())
@@ -166,17 +152,13 @@ namespace ASR.Controllers
             }
 
             return View(slot);
-
         }
 
         // GET: Slots/Edit/5
         public async Task<IActionResult> SlotEdit(string roomid, string startTime)
-        {
-            //var slotTime = DateTime.ParseExact(startTime, "MM/dd/yyyy HH:mm:ss", null, DateTimeStyles.None);
-
-            //var slot = await _context.Slot.FindAsync(roomid, slotTime);
-
+        {          
             Slot slot = await GetSlot(roomid, startTime);
+            ViewBag.id = slot.Staff.Email;
 
             if (slot == null)
             {
@@ -193,25 +175,29 @@ namespace ASR.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SlotEdit(string roomid, string startTime, [Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot)
         {
+            ViewBag.id = $"{slot.StaffID}@rmit.edu.au";
+
             if (ModelState.IsValid)
             {
-                try
+                using (var client = new HttpClient())
                 {
-                    _context.Update(slot);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SlotExists(slot.RoomID))
+                    //Parsing service base url
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Clear();
+
+                    //Serialize the slot object to json file
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(slot),Encoding.UTF8, "application/json");
+                    //Sending request to web api
+                    HttpResponseMessage reqSlot = await client.PutAsync($"Slot?roomid={roomid}&startTime={startTime}", content);
+                    
+                    //Checking whether the request is successfull or not
+                    if(reqSlot.StatusCode == HttpStatusCode.NoContent || reqSlot.StatusCode == HttpStatusCode.OK)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        ViewBag.Message= "Slot has been updated!";
                     }
                 }
-                return RedirectToAction(nameof(ListSlots));
+ 
+                return RedirectToAction(nameof(ListSlots),new { id = $"{slot.StaffID}@rmit.edu.au" });
             }
             //ViewData["RoomID"] = new SelectList(await GetAllRooms(), "RoomID", "RoomName", slot.RoomID);
             ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID", slot.StaffID);
@@ -220,14 +206,14 @@ namespace ASR.Controllers
         }
 
         // GET: Slots/Create
-        public IActionResult SlotCreate(string id)
+        public async Task<IActionResult> SlotCreate(string id)
         {
             ViewBag.id = id;
-            List<SelectListItem> roomSelect = new SelectList(_context.Room, "RoomID", "RoomName").ToList();
+            List<SelectListItem> roomSelect = new SelectList(await GetAllRooms(), "RoomID", "RoomName").ToList();
             roomSelect.Insert(0, (new SelectListItem() { Text = "Select Room", Value = string.Empty }));
             ViewData["RoomID"] = roomSelect;
 
-            //TODO: Limit the time slots allowed based on the room
+            //TODO: Limit the time slots allowed based on the room ?
             List<SelectListItem> timeSelect = new List<SelectListItem>();
             TimeSpan time = Room.OpeningTime;
             TimeSpan oneHour = new TimeSpan(1, 0, 0);
@@ -239,9 +225,10 @@ namespace ASR.Controllers
             }
             ViewData["StartHour"] = timeSelect;
 
-            //TODO: Block time picker to only show future dates excluding Sat and Sun
+            //TODO: Block time picker to only show future dates excluding Sat and Sun - not implemented
 
-            ViewData["StaffID"] = new SelectList(_context.Staff, "StaffID", "StaffID");
+            //ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID");
+            ViewData["StaffID"] = id.Substring(0, 6);
 
             return View();
         }
@@ -251,18 +238,46 @@ namespace ASR.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SlotCreate([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string StartHour, string id)
+        public async Task<IActionResult> SlotCreate([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string StartHour)
         {
-            ViewBag.id = id;
+            ViewBag.id = $"{slot.StaffID}@rmit.edu.au";
             slot.StudentID = null;
             slot.StartTime = slot.StartTime + TimeSpan.Parse(StartHour);
 
             if (ModelState.IsValid)
             {
-                _context.Add(slot);
+               using(var client = new HttpClient())
+                {
+                    //Parsing service base url
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Clear();
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(ListSlots));
+                    //Serialize the slot object to json file
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(slot), Encoding.UTF8, "application/json");
+                    //Sending request to web api
+                    HttpResponseMessage reqSlot = await client.PostAsync("Slot", content);
+
+                    if (reqSlot.IsSuccessStatusCode)
+                    {
+                        ViewBag.Message = "New Slot has been created"; // dummy 
+                    }
+                }
+
+                return RedirectToAction(nameof(ListSlots),new { id = $"{slot.StaffID}@rmit.edu.au"});
+            }
+            else
+            {
+                ViewData["StaffID"] = Request.Form["StaffID"];
+                List<SelectListItem> timeSelect = new List<SelectListItem>();
+                TimeSpan time = Room.OpeningTime;
+                TimeSpan oneHour = new TimeSpan(1, 0, 0);
+
+                while (time < Room.ClosingTime)
+                {
+                    timeSelect.Add(new SelectListItem { Value = time.ToString(), Text = time.ToString("hh\\:mm") });
+                    time = time.Add(oneHour);
+                }
+                ViewData["StartHour"] = timeSelect;
             }
 
             //Check if room is already selected
@@ -271,24 +286,32 @@ namespace ASR.Controllers
                 ModelState.AddModelError("", "Please select a room");
             }
 
-            ViewData["RoomID"] = new SelectList(_context.Room, "RoomID", "RoomName", slot.RoomID);
-            ViewData["StaffID"] = new SelectList(_context.Staff, "StaffID", "StaffID", slot.StaffID);
-
+            ViewData["RoomID"] = new SelectList(await GetAllRooms(), "RoomID", "RoomName", slot.RoomID);
+            //ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID", slot.StaffID);
+            
             return View(slot);
         }    
 
         // GET: Slots/Delete/5
         public async Task<IActionResult> SlotDelete(string roomid, string startTime)
         {
-            var slot = await _context.Slot
-                .Include(s => s.Room)
-                .Include(s => s.Staff)
-                .Include(s => s.Student)
-                .FirstOrDefaultAsync(m => (m.RoomID == roomid) && (m.StartTime.ToString("MM/dd/yyyy HH:mm:ss") == startTime));
+            Slot slot = await GetSlot(roomid, startTime);
+
             if (slot == null)
             {
                 return NotFound();
             }
+            else
+            {
+                if (slot.StudentID != null)
+                {
+
+                }
+            }
+
+            ViewBag.id = slot.Staff.Email;
+            ViewBag.roomid = roomid;
+            ViewBag.startTime = startTime;
 
             return View(slot);
         }
@@ -296,19 +319,60 @@ namespace ASR.Controllers
         // POST: Slots/Delete/5
         [HttpPost, ActionName("SlotDelete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SlotDeleteConfirmed(string roomid, string startTime)
+        public async Task<IActionResult> SlotDeleteConfirmed([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string roomid, string startTime)
         {
-            var slotTime = DateTime.ParseExact(startTime, "MM/dd/yyyy HH:mm:ss", null, DateTimeStyles.None);
-            var slot = await _context.Slot.FindAsync(roomid, slotTime);
-            _context.Slot.Remove(slot);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ListSlots));
+            var staffId = slot.StaffID;
+            roomid = slot.RoomID;
+
+            using (var client = new HttpClient())
+            {
+                //Parsing service base url
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlot = await client.DeleteAsync($"Slot?roomid={roomid}&startTime={startTime}");
+
+                if (reqSlot.IsSuccessStatusCode)
+                {
+                    ViewBag.Message = "Slot has been deleted"; // dummy 
+                }
+
+            }
+
+            return RedirectToAction(nameof(ListSlots),new { id = staffId});
         }
 
 
         private bool SlotExists(string id)
         {
             return _context.Slot.Any(e => e.RoomID == id);
+        }
+
+        //Get one staff
+        private async Task<Staff> GetStaff(string staffId)
+        {
+            Staff staff = new Staff();
+
+            using (var client = new HttpClient())
+            {
+                //Parsing service base url
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Sending request to web api
+                HttpResponseMessage req = await client.GetAsync($"Staff/{staffId}");
+
+                //Checking the response is successful or not
+                if (req.IsSuccessStatusCode)
+                {
+                    //Storing the response detail received from web api
+                    var StaffResp = req.Content.ReadAsStringAsync().Result;
+
+                    //Deserialize the response received from web api and storing to slot list
+                    staff = JsonConvert.DeserializeObject<Staff>(StaffResp);
+                }
+            }
+            return staff;
         }
 
         //Get One Slot 
@@ -330,6 +394,8 @@ namespace ASR.Controllers
                     getSlot = JsonConvert.DeserializeObject<Slot>(slotResp);
                 }
             }
+            System.Console.WriteLine(getSlot.ToString());
+
             return getSlot;
         }
 

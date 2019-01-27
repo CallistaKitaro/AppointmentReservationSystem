@@ -9,49 +9,68 @@
     @await Html.PartialAsync("_StaffPartialView");
 }
 
-<h2>List Staff Schedule</h2>
+<h2>List Schedule</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Room.RoomName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Staff)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>              
-                @Html.DisplayFor(modelItem => item.RoomID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
-            </td>
-            <td>
-                <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
-                <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "SlotEdit", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) |
-                @Html.ActionLink("Details", "SlotDetails", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) 
-              
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+<h4 class="form-control" name="StaffName">Name : @ViewBag.StaffName</h4>
+<h4 class="form-control" name="StaffID">Email : @ViewBag.id</h4>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room.RoomName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Staff)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Student)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <p>@Html.DisplayFor(modelItem => item.RoomID)</p>
+                    </td>
+                    <td>
+                        <p>@Html.DisplayFor(modelItem => item.StartTime)</p>
+                    </td>
+                    <td>
+                        <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                    </td>
+                    <td>
+                        <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                        <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "SlotEdit", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) |
+                        @Html.ActionLink("Details", "SlotDetails", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })|
+                        @Html.ActionLink("Delete", "SlotDelete", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@if (ViewBag.Message != null)
+{
+    <script>
+
+        $(document).ready(function(){
+
+            alert('@ViewBag.Message');
+
+        });
+
+    </script>
+}

@@ -8,14 +8,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a asp-area="" asp-controller="Staffs" asp-action="Index" class="navbar-brand">Staff Homepage</a>
+            <a asp-area="" asp-controller="Staffs" asp-action="Index" asp-route-id="@ViewBag.id" class="navbar-brand">Staff Homepage</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@ViewBag.id">List Schedules</a></li>
                 <li><a asp-area="" asp-controller="Staffs" asp-action="RoomAvailability" asp-route-id="@ViewBag.id">View Room Availability</a></li>
                 <li><a asp-area="" asp-controller="Staffs" asp-action="SlotCreate" asp-route-id="@ViewBag.id">Create a Slot</a></li>
-                <li><a asp-area="" asp-controller="Staffs" asp-action="ShowSlot" asp-route-id="@ViewBag.id">Remove a Slot</a></li>
+                <li><a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@ViewBag.id">Remove a Slot</a></li>
             </ul>
             <partial name="_LoginPartial" />
         </div>
