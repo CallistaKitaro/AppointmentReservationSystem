@@ -130,45 +130,21 @@ namespace ASR.Controllers
 
             List<RoomViewModel> roomAvail = new List<RoomViewModel>();
 
-            //dummy date for testing
-            //DateTime DateSearch = DateTime.Parse("30/01/2019").Date;
+            List<Room> rooms = await GetAllRooms();
+            List<Slot> slots = await GetAllSlots();
 
-            using(var client = new HttpClient())
+            //Check every room in system if already created schedule on particular date
+            foreach (Room rm in rooms)
             {
-                //Parsing service base url
-                client.BaseAddress = new Uri(baseUrl);
-                client.DefaultRequestHeaders.Clear();
-
-                //Sending request to web api
-                HttpResponseMessage reqRoom = await client.GetAsync("Room/GetAllRooms");
-                HttpResponseMessage reqSlot = await client.GetAsync("Slot/GetAllSlots");
-    
-                //Checking the response is successful or not
-                if (reqRoom.IsSuccessStatusCode && reqSlot.IsSuccessStatusCode)
+                var newRoom = new RoomViewModel { RoomName = rm.RoomName, Availability = ROOMSLOTMAX };
+                foreach (Slot sl in slots)
                 {
-                    //Storing the response detail received from web api
-                    var roomResp = reqRoom.Content.ReadAsStringAsync().Result;
-                    var slotResp = reqSlot.Content.ReadAsStringAsync().Result;
-
-                    //Deserialize the response received from web api and storing to slot list
-                    var rooms = JsonConvert.DeserializeObject<List<Room>>(roomResp);
-                    var slots = JsonConvert.DeserializeObject<List<Slot>>(slotResp);
-
-                    //Check every room in system if already created schedule on particular date
-                    foreach(Room rm in rooms)
+                    if (sl.RoomID == rm.RoomID && sl.StartTime.Date == searchDate)
                     {
-                        var newRoom = new RoomViewModel { RoomName = rm.RoomName, Availability = ROOMSLOTMAX };
-                        foreach (Slot sl in slots)
-                        {
-                            if(sl.RoomID == rm.RoomID && sl.StartTime.Date == searchDate)
-                            {
-                                newRoom.Availability--;
-                            }
-                        }
-                        roomAvail.Add(newRoom);
+                        newRoom.Availability--;
                     }
-
                 }
+                roomAvail.Add(newRoom);
             }
 
             if (roomAvail == null)
@@ -179,15 +155,11 @@ namespace ASR.Controllers
             return View(roomAvail);
         }
 
-
         // GET: Slots/Details/5
-        public async Task<IActionResult> SlotDetails(string roomid, string startTime)
+        public async Task<IActionResult> SlotDetails(string roomid,string startTime)
         {
-            var slot = await _context.Slot
-                .Include(s => s.Room)
-                .Include(s => s.Staff)
-                .Include(s => s.Student)
-                .FirstOrDefaultAsync(m => (m.RoomID == roomid) && (m.StartTime.ToString("MM/dd/yyyy HH:mm:ss") == startTime));
+            Slot slot = await GetSlot(roomid, startTime);
+
             if (slot == null)
             {
                 return NotFound();
@@ -195,6 +167,56 @@ namespace ASR.Controllers
 
             return View(slot);
 
+        }
+
+        // GET: Slots/Edit/5
+        public async Task<IActionResult> SlotEdit(string roomid, string startTime)
+        {
+            //var slotTime = DateTime.ParseExact(startTime, "MM/dd/yyyy HH:mm:ss", null, DateTimeStyles.None);
+
+            //var slot = await _context.Slot.FindAsync(roomid, slotTime);
+
+            Slot slot = await GetSlot(roomid, startTime);
+
+            if (slot == null)
+            {
+                return NotFound();
+            }
+            //ViewData["RoomID"] = new SelectList(await GetAllRooms(), "RoomID", "RoomName", slot.RoomID);
+            ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID", slot.StaffID);
+            ViewData["StudentID"] = new SelectList(await GetAllStudents(), "StudentID", "StudentID", slot.StudentID);
+            return View(slot);
+        }
+
+        // POST: Slots/SlotEdit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SlotEdit(string roomid, string startTime, [Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(slot);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SlotExists(slot.RoomID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(ListSlots));
+            }
+            //ViewData["RoomID"] = new SelectList(await GetAllRooms(), "RoomID", "RoomName", slot.RoomID);
+            ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID", slot.StaffID);
+            ViewData["StudentID"] = new SelectList(await GetAllStudents(), "StudentID", "StudentID", slot.StudentID);
+            return View(slot);
         }
 
         // GET: Slots/Create
@@ -253,55 +275,7 @@ namespace ASR.Controllers
             ViewData["StaffID"] = new SelectList(_context.Staff, "StaffID", "StaffID", slot.StaffID);
 
             return View(slot);
-        }
-
-        // GET: Slots/Edit/5
-        public async Task<IActionResult> SlotEdit(string roomid, string startTime)
-        {
-            var slotTime = DateTime.ParseExact(startTime, "MM/dd/yyyy HH:mm:ss", null, DateTimeStyles.None);
-            var slot = await _context.Slot.FindAsync(roomid, slotTime);
-            if (slot == null)
-            {
-                return NotFound();
-            }
-            ViewData["RoomID"] = new SelectList(_context.Room, "RoomID", "RoomName", slot.RoomID);
-            ViewData["StaffID"] = new SelectList(_context.Staff, "StaffID", "StaffID", slot.StaffID);
-            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", slot.StudentID);
-            return View(slot);
-        }
-
-        // POST: Slots/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SlotEdit(string roomid, string startTime, [Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(slot);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SlotExists(slot.RoomID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(ListSlots));
-            }
-            ViewData["RoomID"] = new SelectList(_context.Room, "RoomID", "RoomName", slot.RoomID);
-            ViewData["StaffID"] = new SelectList(_context.Staff, "StaffID", "StaffID", slot.StaffID);
-            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", slot.StudentID);
-            return View(slot);
-        }
+        }    
 
         // GET: Slots/Delete/5
         public async Task<IActionResult> SlotDelete(string roomid, string startTime)
@@ -331,12 +305,121 @@ namespace ASR.Controllers
             return RedirectToAction(nameof(ListSlots));
         }
 
+
         private bool SlotExists(string id)
         {
             return _context.Slot.Any(e => e.RoomID == id);
         }
 
+        //Get One Slot 
+        private async Task<Slot> GetSlot(string roomid, string startTime)
+        {
+            Slot getSlot = new Slot();
 
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlot = await client.GetAsync($"Slot?roomid={roomid}&startTime={startTime}");
+
+                if (reqSlot.IsSuccessStatusCode)
+                {
+                    var slotResp = reqSlot.Content.ReadAsStringAsync().Result;
+
+                    getSlot = JsonConvert.DeserializeObject<Slot>(slotResp);
+                }
+            }
+            return getSlot;
+        }
+
+        //Get All Slot
+        private async Task<List<Slot>> GetAllSlots()
+        {
+            List<Slot> allSlots = new List<Slot>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlots = await client.GetAsync($"Slot/GetAllSlots");
+
+                if (reqSlots.IsSuccessStatusCode)
+                {
+                    var slotResp = reqSlots.Content.ReadAsStringAsync().Result;
+
+                    allSlots = JsonConvert.DeserializeObject<List<Slot>>(slotResp);
+                }
+            }
+            return allSlots;
+        }
+
+        //Get All Rooms
+        private async Task<List<Room>> GetAllRooms()
+        {
+            List<Room> allRooms = new List<Room>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqRooms = await client.GetAsync($"Room/GetAllRooms");
+
+                if (reqRooms.IsSuccessStatusCode)
+                {
+                    var roomResp = reqRooms.Content.ReadAsStringAsync().Result;
+
+                    allRooms = JsonConvert.DeserializeObject<List<Room>>(roomResp);
+                }
+            }
+            return allRooms;
+        }
+
+        //Get All Staffs
+        private async Task<List<Staff>> GetAllStaffs()
+        {
+            List<Staff> allStaffs = new List<Staff>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqStaffs = await client.GetAsync($"Staff/GetAllStaffs");
+
+                if (reqStaffs.IsSuccessStatusCode)
+                {
+                    var staffResp = reqStaffs.Content.ReadAsStringAsync().Result;
+
+                    allStaffs = JsonConvert.DeserializeObject<List<Staff>>(staffResp);
+                }
+            }
+            return allStaffs;
+        }
+
+        //Get All Students
+        private async Task<List<Student>> GetAllStudents()
+        {
+            List<Student> allStudents = new List<Student>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqStudents = await client.GetAsync($"Student/GetAllStudents");
+
+                if (reqStudents.IsSuccessStatusCode)
+                {
+                    var studResp = reqStudents.Content.ReadAsStringAsync().Result;
+
+                    allStudents = JsonConvert.DeserializeObject<List<Student>>(studResp);
+                }
+            }
+            return allStudents;
+        }
 
         // Post: Search Rooms availability
         //[HttpPost]

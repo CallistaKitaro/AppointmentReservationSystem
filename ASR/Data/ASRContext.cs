@@ -16,15 +16,15 @@ namespace ASR.Models
         }
         
         
-        public DbSet<ASR.Models.Room> Room { get; set; }
+        public DbSet<Room> Room { get; set; }
 
-        public DbSet<ASR.Models.Staff> Staff { get; set; }
+        public DbSet<Staff> Staff { get; set; }
 
-        public DbSet<ASR.Models.Admin> Admin { get; set; }
+        public DbSet<Admin> Admin { get; set; }
 
-        public DbSet<ASR.Models.Student> Student { get; set; }
+        public DbSet<Student> Student { get; set; }
 
-        public DbSet<ASR.Models.Slot> Slot { get; set; }
+        public DbSet<Slot> Slot { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

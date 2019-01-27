@@ -47,8 +47,8 @@
                 <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
             </td>
             <td>
-                @Html.ActionLink("Edit", "SlotEdit", new { RoomId = item.RoomID, StartTime = item.StartTime }) |
-                @Html.ActionLink("Details", "SlotDetails", new { RoomId = item.RoomID, StartTime = item.StartTime }) 
+                @Html.ActionLink("Edit", "SlotEdit", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) |
+                @Html.ActionLink("Details", "SlotDetails", new { RoomId = item.RoomID, StartTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) 
               
             </td>
         </tr>

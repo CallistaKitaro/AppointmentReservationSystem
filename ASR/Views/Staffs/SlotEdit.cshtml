@@ -1,16 +1,24 @@
 ﻿@model ASR.Models.Slot
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Slot Edit";
+    Layout = "_Layout";
+}
+
+@section navigation
+{ 
+    @await Html.PartialAsync("_StaffPartialView");
 }
 
 <h2>Edit</h2>
 
-<h4>Slot</h4>
+<h4>Room name     : @Model.Room.RoomName </h4>
+<h4>Schedule time : @Model.StartTime </h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="SlotEdit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="RoomID" />
             <input type="hidden" asp-for="StartTime" />
