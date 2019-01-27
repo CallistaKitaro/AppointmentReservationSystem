@@ -36,7 +36,7 @@
     <Content Update="Views\Staffs\SlotCreate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Staffs\ShowSlot.cshtml">
+    <Content Update="Views\Slots\ShowSlot.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Staffs\SlotDetails.cshtml">

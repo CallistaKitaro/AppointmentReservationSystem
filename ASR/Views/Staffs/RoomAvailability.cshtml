@@ -8,15 +8,18 @@
     @await Html.PartialAsync("_StaffPartialView")
 }
     
-<h2>Room Availability</h2>
+<h1>Room Availability</h1>
 
-    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
-        <p>
-            <label>Input search date: </label>
-            <input type="date" name="SearchDate" value ="@DateTime.Today.Date" />
-            <input type="Submit" value="filter" />
-        </p>
-    </form>
+<form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
+    <p>
+        <label>Input search date: </label>
+        <input type="date" name="SearchDate" />
+        <input type="Submit" value="filter" />
+    </p>
+</form>
+<h3>
+    Availability rooms on @DateTime.Today.ToLongDateString() 
+</h3>
 
     
 

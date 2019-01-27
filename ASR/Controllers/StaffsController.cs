@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using ASR.Models;
 using ASR.Data;
 using System.Net.Http;
@@ -20,14 +18,14 @@ namespace ASR.Controllers
     [Authorize(Roles = Constants.StaffRole)]
     public class StaffsController : Controller
     {
-        private readonly ASRContext _context;
+        //private readonly ASRContext _context;
         private const int ROOMSLOTMAX = 2;
         readonly string baseUrl = "https://localhost:44317/ASRapi/";
 
-        public StaffsController(ASRContext context)
-        {
-            _context = context;
-        }
+        //public StaffsController(ASRContext context)
+        //{
+        //    _context = context;
+        //}
 
         // GET: Show Staff homepage
         public async Task<IActionResult> Index(string id)
@@ -98,7 +96,6 @@ namespace ASR.Controllers
             {
                 return NotFound();
             }
-
             ViewBag.id = id;
 
             return View();
@@ -108,9 +105,17 @@ namespace ASR.Controllers
         [HttpPost]
         public async Task<IActionResult> ShowRoomAvailability(string id)
         {
-            //var rooms = await _context.Slot.Include(x => x.Room).Where(y => y.StartTime.Date == DateTime.Now.Date).ToListAsync();
-            var searchDate = DateTime.Parse(Request.Form["SearchDate"]).Date;
-
+            DateTime searchDate;
+            if (Request.Form["SearchDate"] == "")
+            {
+                searchDate = DateTime.Today.Date;
+            }
+            else
+            {
+                searchDate = DateTime.Parse(Request.Form["SearchDate"]).Date;
+            }
+         
+            ViewBag.SearchDate = searchDate.ToLongDateString();
             ViewBag.id = id;          
             var staffId = id.Substring(0, 6);
 
@@ -305,12 +310,12 @@ namespace ASR.Controllers
             {
                 if (slot.StudentID != null)
                 {
-
+                    //To Do : add logic so only the slot that already booked can be deleted
                 }
             }
 
             ViewBag.id = slot.Staff.Email;
-            ViewBag.roomid = roomid;
+            ViewBag.roomid = slot.RoomID;
             ViewBag.startTime = startTime;
 
             return View(slot);
@@ -319,11 +324,10 @@ namespace ASR.Controllers
         // POST: Slots/Delete/5
         [HttpPost, ActionName("SlotDelete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SlotDeleteConfirmed([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string roomid, string startTime)
+        public async Task<IActionResult> SlotDelete([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string roomid, string startTime)
         {
             var staffId = slot.StaffID;
-            roomid = slot.RoomID;
-
+         
             using (var client = new HttpClient())
             {
                 //Parsing service base url
@@ -340,12 +344,6 @@ namespace ASR.Controllers
             }
 
             return RedirectToAction(nameof(ListSlots),new { id = staffId});
-        }
-
-
-        private bool SlotExists(string id)
-        {
-            return _context.Slot.Any(e => e.RoomID == id);
         }
 
         //Get one staff
@@ -394,8 +392,7 @@ namespace ASR.Controllers
                     getSlot = JsonConvert.DeserializeObject<Slot>(slotResp);
                 }
             }
-            System.Console.WriteLine(getSlot.ToString());
-
+  
             return getSlot;
         }
 
@@ -486,180 +483,6 @@ namespace ASR.Controllers
             }
             return allStudents;
         }
-
-        // Post: Search Rooms availability
-        //[HttpPost]
-        //public async Task<IActionResult> RoomAvailability(DateTime searchDate,bool notUsed)
-        //{
-        //    if (searchDate == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var rooms = await _context.Slot.Include(x => x.Room).Where(y => y.StartTime.Date == searchDate).ToListAsync();
-
-        //    if (rooms == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(rooms);
-        //}
-
-        // GET: Staffs/Details/5
-        //public async Task<IActionResult> StaffDetails(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var staff = await _context.Staff
-        //        .FirstOrDefaultAsync(m => m.StaffID == id);
-        //    if (staff == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(staff);
-        //}
-
-        // GET: Staffs/Create
-        //public IActionResult StaffCreate()
-        //{
-        //    return View();
-        //}
-
-        // POST: Staffs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StaffCreate([Bind("StaffID,FirstName,LastName,Email")] Staff staff)
-        {
-            if (ModelState.IsValid)
-            {
-                if (StaffExists(staff.StaffID))
-                {
-                    ModelState.AddModelError("", "User already exist");
-                    return View(staff);
-                }
-                if (_context.Staff.Any(e => e.Email == staff.Email))
-                {
-                    ModelState.AddModelError("", "Email has already exist");
-                    return View(staff);
-                }
-                else
-                {
-                    staff.StaffID = staff.StaffID.ToLower();
-                    staff.Email = staff.Email.ToLower();
-                    _context.Add(staff);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(ListSlots));
-                }
-            }
-            return View(staff);
-        }
-
-        // GET: Staffs/Edit/5
-        public async Task<IActionResult> StaffEdit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-            return View(staff);
-        }
-
-        // POST: Staffs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StaffEdit(string id, [Bind("StaffID,FirstName,LastName,Email")] Staff staff)
-        {
-            if (id != staff.StaffID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    if (_context.Staff.Any(e => (e.Email == staff.Email) && (e.StaffID != staff.StaffID)))
-                    {
-                        ModelState.AddModelError("", "Email has already exist");
-                        return View(staff);
-                    }
-                    else
-                    {
-                        staff.Email = staff.Email.ToLower();
-                        _context.Update(staff);
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StaffExists(staff.StaffID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(ListSlots));
-            }
-            return View(staff);
-        }
-
-        // GET: Staffs/Delete/5
-        public async Task<IActionResult> StaffDelete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var staff = await _context.Staff
-                .FirstOrDefaultAsync(m => m.StaffID == id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            return View(staff);
-        }
-
-        // POST: Staffs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StaffDeleteConfirmed(string id)
-        {
-            var staff = await _context.Staff.FindAsync(id);
-            _context.Staff.Remove(staff);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ListSlots));
-        }
-
-        private bool StaffExists(string id)
-        {
-            return _context.Staff.Any(e => e.StaffID == id);
-        }
-
-        // GET: Slots
-        //public async Task<IActionResult> ShowSlot()
-        //{
-        //    var aSRContext = _context.Slot.Include(s => s.Room).Include(s => s.Staff).Include(s => s.Student);
-        //    return View(await aSRContext.ToListAsync());
-        //}
 
     }
 }

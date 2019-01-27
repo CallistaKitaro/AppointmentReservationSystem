@@ -16,9 +16,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="SlotDelete">
+        <form asp-action="SlotDelete" asp-route-roomid="@ViewBag.roomid" method="post">
             <div>
                 <label class="control-label" asp-for="Room.RoomName"></label>
+                <input type="hidden" class="form-control" asp-for="Room.RoomID" value="@ViewBag.roomid" />
                 <input type="text" class="form-control" asp-for="Room.RoomName" />
             </div>
             <div>
