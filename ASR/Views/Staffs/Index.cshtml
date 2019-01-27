@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ASR.Models.Staff
+
+@{
     ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
@@ -7,6 +9,8 @@
     @await Html.PartialAsync("_StaffPartialView")
 }
 
-<h2>Staff Homepage</h2>
+<h2>Homepage @Model.FirstName @Model.LastName </h2>
+<br/>
+
 
 

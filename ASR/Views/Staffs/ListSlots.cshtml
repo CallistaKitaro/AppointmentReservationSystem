@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ASR.Models.Slot>
+
+@{
+    ViewData["Title"] = "List Schedule";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @await Html.PartialAsync("_StaffPartialView");
+}
+
+<h2>List Staff Schedule</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Room.RoomName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Staff)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>              
+                @Html.DisplayFor(modelItem => item.RoomID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+            </td>
+            <td>
+                <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "SlotEdit", new { RoomId = item.RoomID, StartTime = item.StartTime }) |
+                @Html.ActionLink("Details", "SlotDetails", new { RoomId = item.RoomID, StartTime = item.StartTime }) 
+              
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

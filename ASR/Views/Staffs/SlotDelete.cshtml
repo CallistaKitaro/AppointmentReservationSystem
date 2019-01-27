@@ -40,6 +40,6 @@
         <input type="hidden" asp-for="RoomID" />
         <input type="hidden" asp-for="StartTime" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="ShowSlot">Back to List</a>
+        <a asp-action="ShowSlot" asp-route-id="@ViewBag.id">Back to List</a>
     </form>
 </div>

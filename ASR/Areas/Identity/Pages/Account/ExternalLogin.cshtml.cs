@@ -177,6 +177,7 @@ namespace ASR.Areas.Identity.Pages.Account
                     //Adding the staffID column at AspNetUser Table
                     _context.Users.FirstOrDefault(u => u.Email == Input.Email).StaffID = staff.StaffID;
                     await _context.SaveChangesAsync();
+
                 }
                 else if (studentEmailRegex.IsMatch(Input.Email))
                 {

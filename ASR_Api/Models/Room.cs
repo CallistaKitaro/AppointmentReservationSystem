@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ASR.Models
+namespace ASR_Api.Models
 {
     public class Room
     {
@@ -17,7 +17,7 @@ namespace ASR.Models
         [StringLength(1)]
         public string RoomName { get; set; }
 
-        [Newtonsoft.Json.JsonIgnoreAttribute]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
 
         public static TimeSpan OpeningTime { get; } = new TimeSpan(9, 0, 0);

@@ -1,16 +1,12 @@
-﻿using ASR.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ASR.Models
+namespace ASR_Api.Models
 {
-    [Authorize(Roles = Constants.StaffRole)]
     public class Staff
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -29,9 +25,7 @@ namespace ASR.Models
         [RegularExpression(@"([a-zA-Z0-9_\-\.]+)\@rmit.edu.au", ErrorMessage = "Invalid staff email")]
         public string Email { get; set; }
 
-        [Newtonsoft.Json.JsonIgnoreAttribute]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Slot> StaffSlots { get; set; } = new List<Slot>();
-
-        
     }
 }

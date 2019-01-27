@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ASR.Models;
+using Microsoft.AspNetCore.Authorization;
+using ASR.Data;
 
 namespace ASR.Controllers
 {
+    [Authorize(Roles = Constants.StudentRole)]
     public class StudentsController : Controller
     {
         private readonly ASRContext _context;
@@ -19,7 +22,7 @@ namespace ASR.Controllers
         }
 
         // Show Student Homepage
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

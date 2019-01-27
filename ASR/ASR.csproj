@@ -27,6 +27,9 @@
     <Content Update="Views\Shared\_StaffPartialView.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Staffs\ShowRoomAvailability.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Staffs\RoomAvailability.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

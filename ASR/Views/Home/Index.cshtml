@@ -1,9 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
-@{
-    //ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Homepage";
     Layout = "_Layout";
 }
 
@@ -14,8 +10,8 @@
     <div class="jumbotron">
         <h1>Appointment Scheduling and Reservation System</h1>
         <p>The easier way to make schedule and appointment between student and staff</p>
-        <p>
-            <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">Login</a>
+        <p>      
+            <a class="btn btn-lg btn-primary" a asp-area="Identity" asp-page="/Account/Login" role="button">Login</a>
         </p>
     </div>
 

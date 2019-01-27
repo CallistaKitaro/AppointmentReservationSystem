@@ -1,0 +1,50 @@
+﻿@model  IEnumerable<ASR.Models.RoomViewModel>
+
+@{
+    ViewData["Title"] = "Room Availability";
+    Layout = "_Layout";
+}
+@section navigation
+    {
+        @await Html.PartialAsync("_StaffPartialView")
+    }
+
+    <h2>Room Availability</h2>
+
+    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
+        <p>
+            <label>Input search date: </label>
+            <input type="date" name="SearchDate" value ="@DateTime.Today.Date" />
+            <input type="Submit" value="filter" />
+        </p>
+
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.RoomName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Availability)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoomName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Availability)
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+

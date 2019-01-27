@@ -1,43 +1,22 @@
-﻿@model IEnumerable<ASR.Models.Room>
-
-@{
-    //ViewData["Title"] = "RoomAvailability";
+﻿@{
+    ViewData["Title"] = "Room Availability";
     Layout = "_Layout";
 }
 
-@section navigation{ 
-    @Html.Partial("_StaffPartialView")
+@section navigation
+{
+    @await Html.PartialAsync("_StaffPartialView")
 }
-
+    
 <h2>Room Availability</h2>
 
-<form>
-    <p>
-        Input Date: <input type="date" asp-for="SearchDate" />
-        <input type="Submit" value="filter" />
-    </p>
+    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
+        <p>
+            <label>Input search date: </label>
+            <input type="date" name="SearchDate" value ="@DateTime.Today.Date" />
+            <input type="Submit" value="filter" />
+        </p>
+    </form>
 
-</form>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomName)
-                </td>         
-            </tr>
-        }
-    </tbody>
-
-</table>
+    
 
