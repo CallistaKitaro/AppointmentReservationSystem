@@ -1,0 +1,64 @@
+﻿@model ASR.Models.SlotStaffViewModel
+
+@{
+    ViewData["Title"] = "StudentView";
+    Layout = "_Layout";
+}
+
+@section navigation
+{
+    @await Html.PartialAsync("_StudentPartialView")
+}
+
+<h2>Staff Availability</h2>
+
+<form class="form-group" asp-controller="Students" asp-action="StaffAvailability" method="get">
+    <p>
+        <select class="form-group"  asp-for="searchStaff" asp-items="Model.staffID" >
+            <option value="">All</option>
+        </select>
+        <input class="btn btn-group-xs"  type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Slots[0].Staff)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Slots[0].StartTime)
+            </th>
+            <th>Time</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Slots)
+        {
+        <tr>         
+            <td>
+                @Html.DisplayFor(modelItem => item.StaffID)
+            </td>   
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+            </td>
+                    
+            @if (item.StudentID != null)
+            {
+                <td>Not Available</td>
+            }
+            else
+            {
+                <td>
+                    @Html.ActionLink("Details", "SlotDetails", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                </td>
+            }
+        </tr>
+        }
+    </tbody>
+</table>

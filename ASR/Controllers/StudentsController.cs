@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using ASR.Models;
 using Microsoft.AspNetCore.Authorization;
 using ASR.Data;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net;
 
 namespace ASR.Controllers
 {
@@ -15,46 +19,100 @@ namespace ASR.Controllers
     public class StudentsController : Controller
     {
         private readonly ASRContext _context;
+        readonly string baseUrl = "https://localhost:44317/ASRapi/";
+        //public string Id { get; set; }
+        private StudentSlotViewModel SlotStudent;
 
         public StudentsController(ASRContext context)
         {
+            SlotStudent = new StudentSlotViewModel();
             _context = context;
         }
 
         // Show Student Homepage
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: Students
-        public async Task<IActionResult> ListStudents()
-        {
-            return View(await _context.Student.ToListAsync());
-        }
-
-        // GET: Students/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Index(string id)
         {
             if (id == null)
             {
-                return NotFound();
+                id = SlotStudent.student.Email;
             }
 
-            var student = await _context.Student
-                .FirstOrDefaultAsync(m => m.StudentID == id);
-            if (student == null)
+            ViewBag.id = id;
+            //Id = id;
+            var studentId = id.Substring(0, 8);
+
+            //Get Student
+            Student student = await GetStudent(studentId);
+
+            if(student == null)
+            {
+                return NotFound();
+            }
+            SlotStudent.student = student;
+
+            //Id = student.Email;
+            return View(SlotStudent);
+        }
+
+        // GET: Students
+        public async Task<IActionResult> ListSlots(string id)
+        {
+            if (id == null)
+            {
+                id = SlotStudent.student.Email;
+            }
+
+            ViewBag.id = id;         
+            List<Slot> allSlots = new List<Slot>();
+            allSlots = await GetAllSlots();
+            if(allSlots == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            return View(allSlots);
         }
 
-        // GET: Students/Create
-        public IActionResult Create()
+        // GET: Students/Details/5
+        public async Task<IActionResult> SlotDetails(string roomid,string startTime)
         {
-            return View();
+            Slot slot = await GetSlot(roomid, startTime);
+
+            if (slot == null)
+            {
+                return NotFound();
+            }
+            SlotStudent.slot = slot;
+
+            //ViewBag.id = Id;
+            return View(SlotStudent);
+        }
+
+        //Get Staff availability
+        public async Task<IActionResult> StaffAvailability(string searchStaff)
+        {
+            List<Slot> slots = await GetAllSlots();
+            var staffId = slots.Select(s => s.StaffID).Distinct().OrderBy(s => s);
+
+            var Slots = slots.Select(s => s);
+            if (!string.IsNullOrEmpty(searchStaff))
+                Slots = slots.Where(s => s.StaffID == searchStaff);
+
+            return View(new SlotStaffViewModel
+            {
+                staffID = new SelectList(staffId.ToList()),
+                Slots = Slots.ToList()
+            });
+        }
+        
+        // GET: Students/Create
+        [HttpGet]
+        public async Task<IActionResult> MakeBooking(string roomid, string startTime)
+        {
+            
+            Slot slot = await GetSlot(roomid, startTime);
+            SlotStudent.slot = slot;
+            return View(SlotStudent);
         }
 
         // POST: Students/Create
@@ -62,30 +120,61 @@ namespace ASR.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentID,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> MakeBooking()
         {
-            if (ModelState.IsValid)
-            {
-                if (StudentExists(student.StudentID))
+
+            //var studentID = Request.Form["StudentID"];
+            //if(studentID == "")
+            //{
+            //    ModelState.AddModelError("", "StudentID still empty");
+            //    return View(slot);
+            //}
+            //else
+            //{
+               
+            //}
+
+            var slots = await GetAllSlots();
+
+            //if (ModelState.IsValid)
+            //{
+                if (slots.Where(s => s.StartTime == SlotStudent.slot.StartTime && s.StudentID == SlotStudent.slot.StudentID).Any())
                 {
-                    ModelState.AddModelError("", "User already exist");
-                    return View(student);
-                }
-                if (_context.Student.Any(e => e.Email == student.Email))
-                {
-                    ModelState.AddModelError("", "Email has already exist");
-                    return View(student);
+
                 }
                 else
                 {
-                    student.StudentID = student.StudentID.ToLower();
-                    student.Email = student.Email.ToLower();
-                    _context.Add(student);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    var roomid = SlotStudent.slot.RoomID;
+                    var startTime = SlotStudent.slot.StartTime.Date.ToString("dd/MM/yyyy HH:mm");
+
+                    using (var client = new HttpClient())
+                    {
+                        //Parsing service base url
+                        client.BaseAddress = new Uri(baseUrl);
+                        client.DefaultRequestHeaders.Clear();
+
+                        //Serialize the slot object to json file
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(SlotStudent.slot), Encoding.UTF8, "application/json");
+
+                        //Sending request to web api
+                        HttpResponseMessage req = await client.PutAsync($"Slot?{roomid}&{startTime}", content);
+
+                        //Checking whether the request is successfull or not
+                        if (req.StatusCode == HttpStatusCode.NoContent || req.StatusCode == HttpStatusCode.OK)
+                        {
+                            ViewBag.Message = "Slot has been booked!";
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Booking failure.");
+                            return View(SlotStudent);
+                        }
+                    }
                 }
-            }
-            return View(student);
+                return RedirectToAction(nameof(ListSlots));
+            //}
+            
+            //return View(slot);
         }
 
         // GET: Students/Edit/5
@@ -182,5 +271,124 @@ namespace ASR.Controllers
         {
             return _context.Student.Any(e => e.StudentID == id);
         }
+
+        //Get one student
+        private async Task<Student> GetStudent(string studentId)
+        {
+            Student student = new Student();
+
+            using (var client = new HttpClient())
+            {
+                //Parsing service base url
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Sending request to web api
+                HttpResponseMessage req = await client.GetAsync($"Student/{studentId}");
+
+                //Checking the response is successful or not
+                if (req.IsSuccessStatusCode)
+                {
+                    //Storing the response detail received from web api
+                    var StudentResp = req.Content.ReadAsStringAsync().Result;
+
+                    //Deserialize the response received from web api and storing to slot list
+                    student = JsonConvert.DeserializeObject<Student>(StudentResp);
+                }
+            }
+            return student;
+        }
+
+        //Get One Slot 
+        private async Task<Slot> GetSlot(string roomid, string startTime)
+        {
+            Slot getSlot = new Slot();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlot = await client.GetAsync($"Slot?roomid={roomid}&startTime={startTime}");
+
+                if (reqSlot.IsSuccessStatusCode)
+                {
+                    var slotResp = reqSlot.Content.ReadAsStringAsync().Result;
+
+                    getSlot = JsonConvert.DeserializeObject<Slot>(slotResp);
+                }
+            }
+
+            return getSlot;
+        }
+
+        //Get All Students
+        private async Task<List<Student>> GetAllStudents()
+        {
+            List<Student> allStudents = new List<Student>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqStudents = await client.GetAsync($"Student/GetAllStudents");
+
+                if (reqStudents.IsSuccessStatusCode)
+                {
+                    var studResp = reqStudents.Content.ReadAsStringAsync().Result;
+
+                    allStudents = JsonConvert.DeserializeObject<List<Student>>(studResp);
+                }
+            }
+            return allStudents;
+        }
+
+        //Get All Staffs
+        private async Task<List<Staff>> GetAllStaffs()
+        {
+            List<Staff> allStaffs = new List<Staff>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqStaffs = await client.GetAsync($"Staff/GetAllStaffs");
+
+                if (reqStaffs.IsSuccessStatusCode)
+                {
+                    var staffResp = reqStaffs.Content.ReadAsStringAsync().Result;
+
+                    allStaffs = JsonConvert.DeserializeObject<List<Staff>>(staffResp);
+                }
+            }
+            return allStaffs;
+        }
+
+        //Get All Slot
+        private async Task<List<Slot>> GetAllSlots()
+        {
+            List<Slot> allSlots = new List<Slot>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlots = await client.GetAsync($"Slot/GetAllSlots");
+
+                if (reqSlots.IsSuccessStatusCode)
+                {
+                    var slotResp = reqSlots.Content.ReadAsStringAsync().Result;
+
+                    allSlots = JsonConvert.DeserializeObject<List<Slot>>(slotResp);
+                }
+            }
+            return allSlots;
+        }
+
+
+
     }
 }

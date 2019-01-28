@@ -1,12 +1,17 @@
-﻿
+﻿@model ASR.Models.StudentSlotViewModel
+
 @{
     ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
 
-@section navigation{ 
+@section navigation{
     @await Html.PartialAsync("_StudentPartialView")
 }
 
-<h2>Student Homepage</h2>
+
+<h1>Student Homepage</h1>
+
+<h2 class="form-control-static">Welcome @Model.student.FirstName  @Model.student.LastName </h2>
+<h3>Email : @Model.student.Email</h3>
 

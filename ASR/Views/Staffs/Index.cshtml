@@ -9,9 +9,10 @@
     @await Html.PartialAsync("_StaffPartialView")
 }
 
-<h2>Homepage @Model.FirstName @Model.LastName </h2>
+<h1>Staff Homepage </h1>
 
-
+<h2 class="form-control-static">Welcome @Model.FirstName @Model.LastName </h2>
+<h3>Email : @Model.Email</h3>
 <br/>
 
 

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<ASR.Models.Slot>
+
+@{
+    ViewData["Title"] = "ListStudents";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @await Html.PartialAsync("_StudentPartialView")
+}
+
+<h2>List Schedules</h2>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room.RoomName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartTime)
+                </th>
+                <th>Time</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Staff)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Student)
+                </th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Room.RoomName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                </td>
+                <td>
+                    <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Staff.FirstName)</p>
+                </td>
+                <td>
+                    <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                </td>
+                @if (item.StudentID != null)
+                {
+                    <td>Booked!</td>
+                }
+                else
+                {
+                    <td>
+                        @Html.ActionLink("Available", "MakeBooking", new { id=@ViewBag.id , roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                    </td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

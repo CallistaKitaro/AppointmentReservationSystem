@@ -155,7 +155,7 @@ namespace ASR.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.id = slot.StaffID;
             return View(slot);
         }
 
