@@ -17,23 +17,31 @@
         <form asp-action="MakeBooking" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <input type="hidden" asp-for="slot.Room.RoomID" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="slot.Room.RoomName" class="control-label"></label>
-                <input type="text" asp-for="slot.Room.RoomName" class="form-control" disabled />
+                <input type="text" asp-for="slot.Room.RoomName" class="form-control" />
                 <span asp-validation-for="slot.Room.RoomName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="slot.StartTime" class="control-label"></label>
-                <input type="text" asp-for="slot.StartTime" class="form-control" disabled />
+                <input type="text" asp-for="slot.StartTime" class="form-control" />
                 <span asp-validation-for="slot.StartTime" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label name ="timeSlot" Value="Time" class="control-label"></label>
+                <input type="text" name="timeSlot" value=@Model.slot.StartTime.TimeOfDay class="form-control" />
+                <span asp-validation-for="slot.StartTime.TimeOfDay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="slot.StaffID" class="control-label"></label>
-                <input type="text" asp-for="slot.StaffID" class="form-control" disabled />
+                <input type="text" asp-for="slot.StaffID" class="form-control" />
                 <span asp-validation-for="slot.StaffID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="student.StudentID" class="control-label"></label>
-                <input type="text" asp-for="student.StudentID" class="form-control" disabled />
+                <input type="text" asp-for="student.StudentID" class="form-control" />
                 <span asp-validation-for="student.StudentID" class="text-danger"></span>
             </div>
             <div class="form-group">

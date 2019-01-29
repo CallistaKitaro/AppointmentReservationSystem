@@ -7,7 +7,7 @@ namespace ASR.Models
 {
     public class StudentSlotViewModel
     {
-        public Slot slot { get; set; } = new Slot();
-        public Student student { get; set; } = new Student();
+        public Slot slot { get; set; } 
+        public Student student { get; set; }
     }
 }

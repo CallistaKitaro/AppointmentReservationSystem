@@ -12,6 +12,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net;
+using System.Globalization;
 
 namespace ASR.Controllers
 {
@@ -107,11 +108,14 @@ namespace ASR.Controllers
         
         // GET: Students/Create
         [HttpGet]
-        public async Task<IActionResult> MakeBooking(string roomid, string startTime)
+        public async Task<IActionResult> MakeBooking(string id, string roomid, string startTime)
         {
-            
             Slot slot = await GetSlot(roomid, startTime);
+            var studentId = id.Substring(0, 8);
+            Student student = await GetStudent(studentId);
             SlotStudent.slot = slot;
+            SlotStudent.student = student;
+
             return View(SlotStudent);
         }
 
@@ -120,61 +124,66 @@ namespace ASR.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MakeBooking()
+        public async Task<IActionResult> MakeBooking(StudentSlotViewModel stdSlot)
         {
 
-            //var studentID = Request.Form["StudentID"];
-            //if(studentID == "")
-            //{
-            //    ModelState.AddModelError("", "StudentID still empty");
-            //    return View(slot);
-            //}
-            //else
-            //{
-               
-            //}
+            var dateSlot = stdSlot.slot.StartTime.Date;
+            var timeSlot = Request.Form["timeSlot"];
+            stdSlot.slot.StartTime = stdSlot.slot.StartTime + TimeSpan.Parse(timeSlot);
+            var StartTime = stdSlot.slot.StartTime.ToString("dd/MM/yyyy HH:mm");
+
+            Slot bookedSlot = new Slot
+                { RoomID = stdSlot.slot.Room.RoomID,
+                  StartTime = stdSlot.slot.StartTime,
+                  StaffID = stdSlot.slot.StaffID,
+                  StudentID = stdSlot.student.StudentID
+                };
+
+            //bookedSlot.StudentID = stdSlot.student.StudentID;
+            
+            if (bookedSlot.StudentID == "")
+            {
+                ModelState.AddModelError("", "StudentID still empty");
+                return View(stdSlot);
+            }
 
             var slots = await GetAllSlots();
 
-            //if (ModelState.IsValid)
-            //{
-                if (slots.Where(s => s.StartTime == SlotStudent.slot.StartTime && s.StudentID == SlotStudent.slot.StudentID).Any())
+            if (slots.Where(s => s.StartTime == bookedSlot.StartTime && s.StudentID == bookedSlot.StudentID).Any())
+            {
+                ModelState.AddModelError("", "Only can book one slot per day");
+                return View(SlotStudent);
+            }
+            else
+            {
+               
+                using (var client = new HttpClient())
                 {
+                    //Parsing service base url
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Clear();
 
-                }
-                else
-                {
-                    var roomid = SlotStudent.slot.RoomID;
-                    var startTime = SlotStudent.slot.StartTime.Date.ToString("dd/MM/yyyy HH:mm");
+                    //Serialize the slot object to json file
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(bookedSlot), Encoding.UTF8, "application/json");
 
-                    using (var client = new HttpClient())
+                    //Sending request to web api
+                    HttpResponseMessage req = await client.PutAsync($"Slot?roomid={bookedSlot.RoomID}&startTime={StartTime}", content);
+
+                    //Checking whether the request is successfull or not
+                    if (req.IsSuccessStatusCode)
                     {
-                        //Parsing service base url
-                        client.BaseAddress = new Uri(baseUrl);
-                        client.DefaultRequestHeaders.Clear();
-
-                        //Serialize the slot object to json file
-                        StringContent content = new StringContent(JsonConvert.SerializeObject(SlotStudent.slot), Encoding.UTF8, "application/json");
-
-                        //Sending request to web api
-                        HttpResponseMessage req = await client.PutAsync($"Slot?{roomid}&{startTime}", content);
-
-                        //Checking whether the request is successfull or not
-                        if (req.StatusCode == HttpStatusCode.NoContent || req.StatusCode == HttpStatusCode.OK)
-                        {
-                            ViewBag.Message = "Slot has been booked!";
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("", "Booking failure.");
-                            return View(SlotStudent);
-                        }
+                        ViewBag.Message = "Slot has been booked!";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Booking failure.");
+                        req.StatusCode.ToString();
+                        return View(stdSlot);
                     }
                 }
-                return RedirectToAction(nameof(ListSlots));
-            //}
-            
-            //return View(slot);
+            }
+            return RedirectToAction(nameof(ListSlots),new { id = bookedSlot.StudentID});
+   
         }
 
         // GET: Students/Edit/5
