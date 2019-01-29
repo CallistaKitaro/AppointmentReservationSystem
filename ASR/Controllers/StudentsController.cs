@@ -90,8 +90,9 @@ namespace ASR.Controllers
         }
 
         //Get Staff availability
-        public async Task<IActionResult> StaffAvailability(string searchStaff)
+        public async Task<IActionResult> StaffAvailability(string id , string searchStaff)
         {
+            ViewBag.id = id;
             List<Slot> slots = await GetAllSlots();
             var staffId = slots.Select(s => s.StaffID).Distinct().OrderBy(s => s);
 
@@ -176,30 +177,44 @@ namespace ASR.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Booking failure.");
+                        ModelState.AddModelError("", "Booking failled.");
                         req.StatusCode.ToString();
                         return View(stdSlot);
                     }
                 }
             }
-            return RedirectToAction(nameof(ListSlots),new { id = bookedSlot.StudentID});
+            return RedirectToAction(nameof(ListSlots),new { id = $"{bookedSlot.StudentID}@student.rmit.edu.au"});
    
         }
 
         // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> CancelBooking(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var student = await _context.Student.FindAsync(id);
+            ViewBag.id = id;
+            ViewBag.Message = "";
+            var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.Student = student.FirstName + " " + student.LastName;
+            List<Slot> slots = await GetAllSlots();
+
             if (student == null)
             {
                 return NotFound();
             }
-            return View(student);
+
+            var studentSlot = slots.FirstOrDefault(s => s.StudentID == studentId);
+
+            if(studentSlot == null)
+            {
+                ViewBag.Message = "No Booking Schedule";
+            }
+
+            return View(studentSlot);
         }
 
         // POST: Students/Edit/5
@@ -207,44 +222,61 @@ namespace ASR.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("StudentID,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> CancelBooking(Slot cancelledSlot)
         {
-            if (id != student.StudentID)
-            {
-                return NotFound();
-            }
+            var dateSlot = cancelledSlot.StartTime.Date;
+            var timeSlot = Request.Form["timeSlot"];
+            var studentId = Request.Form["StudentID"];
+            cancelledSlot.StartTime = cancelledSlot.StartTime + TimeSpan.Parse(timeSlot);
+            var StartTime = cancelledSlot.StartTime.ToString("dd/MM/yyyy HH:mm");
 
-            if (ModelState.IsValid)
+            Slot newSlot = new Slot
             {
-                try
+                RoomID = cancelledSlot.Room.RoomID,
+                StartTime = cancelledSlot.StartTime,
+                StaffID = cancelledSlot.StaffID,
+                StudentID = cancelledSlot.StudentID
+            };
+
+            var slots = await GetAllSlots();
+
+            if (slots.Where(s => s.StudentID == studentId).Any())
+            {
+                newSlot.StudentID = null;
+
+                using (var client = new HttpClient())
                 {
-                    if (_context.Student.Any(e => (e.Email == student.Email) && (e.StudentID != student.StudentID)))
+                    //Parsing service base url
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Clear();
+
+                    //Serialize the slot object to json file
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(newSlot), Encoding.UTF8, "application/json");
+
+                    //Sending request to web api
+                    HttpResponseMessage req = await client.PutAsync($"Slot?roomid={cancelledSlot.RoomID}&startTime={StartTime}", content);
+
+                    //Checking whether the request is successfull or not
+                    if (req.IsSuccessStatusCode)
                     {
-                        ModelState.AddModelError("", "Email has already exist");
-                        return View(student);
+                        ViewBag.Message = "Slot has been cancelled!";
                     }
                     else
                     {
-                        student.Email = student.Email.ToLower();
-                        _context.Update(student);
-                        await _context.SaveChangesAsync();
+                        ModelState.AddModelError("", "Cancellation failed.");
+                        cancelledSlot.StudentID = studentId;
+                        return View(cancelledSlot);
                     }
-
+                  
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.StudentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            else
+            {
+                ModelState.AddModelError("", "Booking schedule not found.");
+               
+            }
+            return RedirectToAction(nameof(ListSlots), new { id = $"{studentId}@student.rmit.edu.au"});
+
         }
 
         // GET: Students/Delete/5
