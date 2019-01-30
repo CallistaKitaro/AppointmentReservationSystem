@@ -60,8 +60,8 @@ namespace ASR.Areas.Identity.Pages.Account
             public string LastName { get; set; }
 
             [Required]
-            [RegularExpression(@"([a-zA-Z0-9_\-\.]+)\@rmit.edu.au|([a-zA-Z0-9_\-\.]+)\@student.rmit.edu.au", 
-                ErrorMessage = "Email ending in @rmit.edu.au or @student.rmit.edu.au only")]
+            [RegularExpression(@"^s\d{7}@student.rmit.edu.au|e\d{5}@rmit.edu.au$", 
+                ErrorMessage = "RMIT University email only")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -130,6 +130,7 @@ namespace ASR.Areas.Identity.Pages.Account
                         LastName = Input.LastName,
                         Email = Input.Email,
                     };
+                    //Adding staff into staff table
                     _context.Add(staff);
                     await _context.SaveChangesAsync();
 
@@ -148,6 +149,7 @@ namespace ASR.Areas.Identity.Pages.Account
                         LastName = Input.LastName,
                         Email = Input.Email,
                     };
+                    //Adding student into student table
                     _context.Add(student);
                     await _context.SaveChangesAsync();
 
