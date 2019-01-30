@@ -155,7 +155,7 @@ namespace ASR.Controllers
             {
                 return NotFound();
             }
-            ViewBag.id = slot.StaffID;
+            ViewBag.id = slot.StaffID+"@rmit.edu.au";
             return View(slot);
         }
 
@@ -300,8 +300,8 @@ namespace ASR.Controllers
         // GET: Slots/Delete/5
         public async Task<IActionResult> SlotDelete(string roomid, string startTime)
         {
+            ViewBag.Message = "";
             Slot slot = await GetSlot(roomid, startTime);
-
             if (slot == null)
             {
                 return NotFound();
@@ -315,8 +315,7 @@ namespace ASR.Controllers
             }
 
             ViewBag.id = slot.Staff.Email;
-            ViewBag.roomid = slot.RoomID;
-            ViewBag.startTime = startTime;
+            //ViewBag.startTime = startTime;
 
             return View(slot);
         }
@@ -324,10 +323,15 @@ namespace ASR.Controllers
         // POST: Slots/Delete/5
         [HttpPost, ActionName("SlotDelete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SlotDelete([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot, string roomid, string startTime)
+        public async Task<IActionResult> SlotDelete([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot)
         {
             var staffId = slot.StaffID;
-         
+            ViewBag.id = staffId + "@rmit.edu.au";      
+            var roomid = slot.RoomID;
+            //var timeSlot = Request.Form["timeSlot"];
+            //slot.StartTime = slot.StartTime + TimeSpan.Parse(timeSlot);
+            var startTime = slot.StartTime.ToString("dd/MM/yyyy HH:mm");
+
             using (var client = new HttpClient())
             {
                 //Parsing service base url
@@ -338,19 +342,19 @@ namespace ASR.Controllers
 
                 if (reqSlot.IsSuccessStatusCode)
                 {
-                    ViewBag.Message = "Slot has been deleted"; // dummy 
+                    ViewBag.Message = "Slot has been deleted"; 
                 }
 
             }
 
-            return RedirectToAction(nameof(ListSlots),new { id = staffId});
+            return RedirectToAction(nameof(ListSlots),new { id = staffId+"@rmit.edu.au" });
         }
 
         //Get one staff
         private async Task<Staff> GetStaff(string staffId)
         {
             Staff staff = new Staff();
-
+           
             using (var client = new HttpClient())
             {
                 //Parsing service base url
@@ -377,7 +381,7 @@ namespace ASR.Controllers
         private async Task<Slot> GetSlot(string roomid, string startTime)
         {
             Slot getSlot = new Slot();
-
+           
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(baseUrl);

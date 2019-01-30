@@ -1,7 +1,7 @@
 ﻿@model ASR.Models.Slot
 
 @{
-    ViewData["Title"] = "SlotDeleteConfirm";
+    ViewData["Title"] = "SlotDelete";
     Layout = "_Layout";
 }
 
@@ -11,69 +11,47 @@
 
 <h2>Slot Delete Confirm</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="SlotDelete" asp-route-roomid="@ViewBag.roomid" method="post">
-            <div>
-                <label class="control-label" asp-for="Room.RoomName"></label>
-                <input type="hidden" class="form-control" asp-for="Room.RoomID" value="@ViewBag.roomid" />
-                <input type="text" class="form-control" asp-for="Room.RoomName" />
-            </div>
-            <div>
-                <label class="control-label" asp-for="StartTime"></label>
-                <input type="text" class="form-control" asp-for="StartTime" />
-            </div>
-            <div>
-                <label class="control-label" asp-for="StaffID"></label>
-                <input type="text" class="form-control" asp-for="StaffID" />
-            </div>
-            <div>
-                <label class="control-label" asp-for="StudentID"></label>
-                <input type="text" class="form-control" asp-for="StudentID" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Delete" class="btn btn-default" />
-            </div>
-            <div>
-                <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!--
-    <div>
+@if (ViewBag.Message != "")
+{
+    <h2>@ViewBag.Message</h2>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Room)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Room.RoomName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.StartTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.StartTime.Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Staff)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.StaffID)
-        </dd>
-    </dl>
+}
+else
+{
+    <h3>Are you sure you want to delete this?</h3>
 
-    <form asp-action="SlotDeleteConfirmed">
-        <input type="hidden" asp-for="StaffID" />
-        <input type="hidden" asp-for="StartTime" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
-    </form>
-</div>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="SlotDelete" method="post">
+                <div class="form-group">
+                    <input type="hidden" asp-for="RoomID" class="form-control" />
+                </div>
+                <div>
+                    <label class="control-label" asp-for="Room.RoomName"></label>
+                    <input type="text" asp-for="Room.RoomName" class="form-control" />
+                </div>
+                <div>
+                    <label class="control-label" asp-for="StartTime"></label>
+                    <input type="text" asp-for="StartTime" class="form-control" />
+                </div>
+                <div>
+                    <label class="control-label" asp-for="StaffID"></label>
+                    <input type="text" asp-for="StaffID" class="form-control" />
+                </div>
+                <div>
+                    <label class="control-label" asp-for="StudentID"></label>
+                    <input type="text" asp-for="StudentID" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Delete" class="btn btn-default" />
+                </div>
+                <div>
+                    <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+}
 
--->
+

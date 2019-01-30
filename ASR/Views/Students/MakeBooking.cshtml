@@ -10,8 +10,9 @@
 
 <h2>Make a Booking</h2>
 
-<h4>Student</h4>
+<h4>Student Name : @ViewBag.Student </h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="MakeBooking" method="post">
@@ -27,12 +28,11 @@
             <div class="form-group">
                 <label asp-for="slot.StartTime" class="control-label"></label>
                 <input type="text" asp-for="slot.StartTime" class="form-control" />
-                <span asp-validation-for="slot.StartTime" class="text-danger"></span>
+               
             </div>
             <div class="form-group">
-                <label name ="timeSlot" Value="Time" class="control-label"></label>
+                <label name="timeSlot" Value="Time" class="control-label"></label>
                 <input type="text" name="timeSlot" value=@Model.slot.StartTime.TimeOfDay class="form-control" />
-                <span asp-validation-for="slot.StartTime.TimeOfDay" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="slot.StaffID" class="control-label"></label>
@@ -52,6 +52,6 @@
 </div>
 
 <div>
-    <a asp-action="ListSlots" asp-route-id="student.Email">Back to List</a>
+    <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
 </div>
 

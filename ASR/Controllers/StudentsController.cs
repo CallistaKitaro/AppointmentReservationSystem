@@ -111,11 +111,27 @@ namespace ASR.Controllers
         [HttpGet]
         public async Task<IActionResult> MakeBooking(string id, string roomid, string startTime)
         {
+            ViewBag.Message = "";
+
             Slot slot = await GetSlot(roomid, startTime);
             var studentId = id.Substring(0, 8);
             Student student = await GetStudent(studentId);
             SlotStudent.slot = slot;
             SlotStudent.student = student;
+            ViewBag.id = id;
+            ViewBag.Student = student.FirstName + " " + student.LastName;
+
+            //var slots = await GetAllSlots();
+
+            //if(student.StudentSlots.Count()>=1)
+            //{
+            //    if (slots.Where(s ))
+            //    {
+            //        ViewBag.Message = "You already ";
+            //    }
+                
+            //}
+
 
             return View(SlotStudent);
         }
@@ -130,8 +146,12 @@ namespace ASR.Controllers
 
             var dateSlot = stdSlot.slot.StartTime.Date;
             var timeSlot = Request.Form["timeSlot"];
+            var studentId = Request.Form["StudentID"];
+            Student student = await GetStudent(studentId);
             stdSlot.slot.StartTime = stdSlot.slot.StartTime + TimeSpan.Parse(timeSlot);
             var StartTime = stdSlot.slot.StartTime.ToString("dd/MM/yyyy HH:mm");
+            ViewBag.id = studentId+"@student.rmit.edu.au";
+            ViewBag.Student = student.FirstName + " " + student.LastName;
 
             Slot bookedSlot = new Slot
                 { RoomID = stdSlot.slot.Room.RoomID,
@@ -139,8 +159,6 @@ namespace ASR.Controllers
                   StaffID = stdSlot.slot.StaffID,
                   StudentID = stdSlot.student.StudentID
                 };
-
-            //bookedSlot.StudentID = stdSlot.student.StudentID;
             
             if (bookedSlot.StudentID == "")
             {
@@ -178,7 +196,6 @@ namespace ASR.Controllers
                     else
                     {
                         ModelState.AddModelError("", "Booking failled.");
-                        req.StatusCode.ToString();
                         return View(stdSlot);
                     }
                 }
@@ -224,11 +241,15 @@ namespace ASR.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(Slot cancelledSlot)
         {
+           
             var dateSlot = cancelledSlot.StartTime.Date;
             var timeSlot = Request.Form["timeSlot"];
             var studentId = Request.Form["StudentID"];
+            var student = await GetStudent(studentId);
             cancelledSlot.StartTime = cancelledSlot.StartTime + TimeSpan.Parse(timeSlot);
             var StartTime = cancelledSlot.StartTime.ToString("dd/MM/yyyy HH:mm");
+            ViewBag.id = studentId+"@student.rmit.edu.id";
+            ViewBag.Student = student.FirstName + " " + student.LastName;
 
             Slot newSlot = new Slot
             {
