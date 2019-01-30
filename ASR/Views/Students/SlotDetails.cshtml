@@ -1,4 +1,4 @@
-﻿@model ASR.Models.StudentSlotViewModel
+﻿@model ASR.Models.Slot
 
 @{
     ViewData["Title"] = "Slot Details";
@@ -9,63 +9,77 @@
     @await Html.PartialAsync("_StudentPartialView")
 }
 
-<h2>Slot Details</h2>
+<h4>Student Name : @ViewBag.StudentName </h4>
+<h4>Student Email : @ViewBag.id </h4>
 
-<div>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.slot.Room.RoomName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.slot.Room.RoomName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.slot.StartTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.slot.StartTime)
-        </dd>
-        <dt>
-            Time
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.slot.StartTime.TimeOfDay)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.slot.Staff.StaffID)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.slot.Staff.StaffID)
-        </dd>
-        <dt>Staff Name</dt>
-        <dd>
-            @Html.DisplayFor(model => model.slot.Staff.FirstName) @Html.DisplayFor(model => model.slot.Staff.LastName)
-        </dd>
-        @if (Model.slot.StudentID == null)
-        {
+<hr />
+
+@if (ViewBag.Message != "")
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <h2>Slot Details</h2>
+
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.slot.Student.StudentID)
-            </dt>
-            <dd>-</dd>
-        }
-        else
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.slot.Student.StudentID)
+                @Html.DisplayNameFor(model => model.Room.RoomName)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.slot.Student.StudentID)
+                @Html.DisplayFor(model => model.Room.RoomName)
             </dd>
-            <dt>Student Name</dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </dt>
             <dd>
-                @Html.DisplayFor(model => model.slot.Student.FirstName) @Html.DisplayFor(model => model.slot.Student.LastName)
+                @Html.DisplayFor(model => model.StartTime)
             </dd>
-        }
+            <dt>
+                Time
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartTime.TimeOfDay)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Staff.StaffID)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Staff.StaffID)
+            </dd>
+            <dt>Staff Name</dt>
+            <dd>
+                @Html.DisplayFor(model => model.Staff.FirstName) @Html.DisplayFor(model => model.Staff.LastName)
+            </dd>
+            @if (Model.StudentID == null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Student.StudentID)
+                </dt>
+                <dd>-</dd>
+            }
+            else
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Student.StudentID)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Student.StudentID)
+                </dd>
+                <dt>Student Name</dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Student.FirstName) @Html.DisplayFor(model => model.Student.LastName)
+                </dd>
+            }
 
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Book slot", "MakeBooking", new { roomid = Model.slot.RoomID, startTime =Model.slot.StartTime.ToString("dd/MM/yyyy HH:mm") })
-  
-</div>
+        </dl>
+    </div>
+    <div>
+        @Html.ActionLink("Book slot", "MakeBooking", new { id=ViewBag.id, roomid = Model.RoomID, startTime = Model.StartTime.ToString("dd/MM/yyyy HH:mm") })
+
+    </div>
+}
+
+

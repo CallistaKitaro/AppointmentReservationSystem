@@ -13,64 +13,63 @@
 
 <h4 class="form-control" name="StaffName">Name : @ViewBag.StaffName</h4>
 <h4 class="form-control" name="StaffID">Email : @ViewBag.id</h4>
+<hr />
 
-<div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room.RoomName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.StartTime)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Student)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Room.RoomID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartTime)
-                    </td>
-                    <td>
-                        <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
-                    </td>
-                    <td>
-                        <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
-                        <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "SlotEdit", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) |
-                        @Html.ActionLink("Details", "SlotDetails", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })|
-                        @Html.ActionLink("Delete", "SlotDelete", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-
-@if (ViewBag.Message != null)
+@if (ViewBag.Message != "")
 {
-    <script>
-
-        $(document).ready(function(){
-
-            alert('@ViewBag.Message');
-
-        });
-
-    </script>
+    <h2>@ViewBag.Message</h2>
 }
+else
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Room.RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StartTime)
+                    </th>
+                    <th>Time </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Staff)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Student)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RoomID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                        </td>
+                        <td>
+                            <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                        </td>
+                        <td>
+                            <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                            <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "SlotEdit", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }) |
+                            @Html.ActionLink("Details", "SlotDetails", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })|
+                            @Html.ActionLink("Delete", "SlotDelete", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

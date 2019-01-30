@@ -19,15 +19,13 @@ namespace ASR.Controllers
     [Authorize(Roles = Constants.StudentRole)]
     public class StudentsController : Controller
     {
-        private readonly ASRContext _context;
-        readonly string baseUrl = "https://localhost:44317/ASRapi/";
-        //public string Id { get; set; }
         private StudentSlotViewModel SlotStudent;
-
+        readonly string baseUrl;
+        
         public StudentsController(ASRContext context)
         {
+            baseUrl = "https://localhost:44317/ASRapi/";
             SlotStudent = new StudentSlotViewModel();
-            _context = context;
         }
 
         // Show Student Homepage
@@ -35,11 +33,10 @@ namespace ASR.Controllers
         {
             if (id == null)
             {
-                id = SlotStudent.student.Email;
+                return NotFound();
             }
 
             ViewBag.id = id;
-            //Id = id;
             var studentId = id.Substring(0, 8);
 
             //Get Student
@@ -49,10 +46,7 @@ namespace ASR.Controllers
             {
                 return NotFound();
             }
-            SlotStudent.student = student;
-
-            //Id = student.Email;
-            return View(SlotStudent);
+            return View(student);
         }
 
         // GET: Students
@@ -60,39 +54,52 @@ namespace ASR.Controllers
         {
             if (id == null)
             {
-                id = SlotStudent.student.Email;
+                return NotFound();
             }
 
-            ViewBag.id = id;         
+            ViewBag.id = id;
+            var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.StudentName = student.FirstName + " " + student.LastName;
+            ViewBag.Message = "";
+
             List<Slot> allSlots = new List<Slot>();
             allSlots = await GetAllSlots();
             if(allSlots == null)
             {
-                return NotFound();
+                ViewBag.Message = "No slot available.";
+                return View();
             }
 
             return View(allSlots);
         }
 
         // GET: Students/Details/5
-        public async Task<IActionResult> SlotDetails(string roomid,string startTime)
+        public async Task<IActionResult> SlotDetails(string id, string roomid,string startTime)
         {
+            ViewBag.Message = "";
+            ViewBag.id = id;
+            var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.StudentName = student.FirstName + " " + student.LastName;
             Slot slot = await GetSlot(roomid, startTime);
-
             if (slot == null)
             {
-                return NotFound();
+                ViewBag.Message = "No slot available.";
+                return View();
             }
-            SlotStudent.slot = slot;
 
-            //ViewBag.id = Id;
-            return View(SlotStudent);
+            return View(slot);
         }
 
         //Get Staff availability
         public async Task<IActionResult> StaffAvailability(string id , string searchStaff)
         {
             ViewBag.id = id;
+            var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.StudentName = student.FirstName + " " + student.LastName;
+
             List<Slot> slots = await GetAllSlots();
             var staffId = slots.Select(s => s.StaffID).Distinct().OrderBy(s => s);
 
@@ -112,26 +119,14 @@ namespace ASR.Controllers
         public async Task<IActionResult> MakeBooking(string id, string roomid, string startTime)
         {
             ViewBag.Message = "";
-
             Slot slot = await GetSlot(roomid, startTime);
             var studentId = id.Substring(0, 8);
             Student student = await GetStudent(studentId);
+
             SlotStudent.slot = slot;
             SlotStudent.student = student;
             ViewBag.id = id;
             ViewBag.Student = student.FirstName + " " + student.LastName;
-
-            //var slots = await GetAllSlots();
-
-            //if(student.StudentSlots.Count()>=1)
-            //{
-            //    if (slots.Where(s ))
-            //    {
-            //        ViewBag.Message = "You already ";
-            //    }
-                
-            //}
-
 
             return View(SlotStudent);
         }
@@ -143,7 +138,7 @@ namespace ASR.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MakeBooking(StudentSlotViewModel stdSlot)
         {
-
+            ViewBag.Message = "";
             var dateSlot = stdSlot.slot.StartTime.Date;
             var timeSlot = Request.Form["timeSlot"];
             var studentId = Request.Form["StudentID"];
@@ -166,46 +161,52 @@ namespace ASR.Controllers
                 return View(stdSlot);
             }
 
-            var slots = await GetAllSlots();
+            var allSlots = await GetAllSlots();
 
-            if (slots.Where(s => s.StartTime == bookedSlot.StartTime && s.StudentID == bookedSlot.StudentID).Any())
+            //Check whether the student already make booking in the same day
+            if (allSlots.Where(s => s.StudentID == bookedSlot.StudentID && s.StartTime.Date == bookedSlot.StartTime.Date).Any())
             {
-                ModelState.AddModelError("", "Only can book one slot per day");
-                return View(SlotStudent);
+                ViewBag.Message = "Student can only book 1 slot per day. Choose another day.";
+                return View();
             }
             else
             {
-               
-                using (var client = new HttpClient())
+                if (allSlots.Where(s => s.RoomID == bookedSlot.RoomID && s.StartTime == bookedSlot.StartTime && s.StudentID != null).Any())
                 {
-                    //Parsing service base url
-                    client.BaseAddress = new Uri(baseUrl);
-                    client.DefaultRequestHeaders.Clear();
-
-                    //Serialize the slot object to json file
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(bookedSlot), Encoding.UTF8, "application/json");
-
-                    //Sending request to web api
-                    HttpResponseMessage req = await client.PutAsync($"Slot?roomid={bookedSlot.RoomID}&startTime={StartTime}", content);
-
-                    //Checking whether the request is successfull or not
-                    if (req.IsSuccessStatusCode)
+                    ViewBag.Message = "Slot schedule not exist or already booked. Choose another slot.";
+                    return View();
+                }
+                else
+                {
+                    using (var client = new HttpClient())
                     {
-                        ViewBag.Message = "Slot has been booked!";
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Booking failled.");
-                        return View(stdSlot);
+                        //Parsing service base url
+                        client.BaseAddress = new Uri(baseUrl);
+                        client.DefaultRequestHeaders.Clear();
+
+                        //Serialize the slot object to json file
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(bookedSlot), Encoding.UTF8, "application/json");
+
+                        //Sending request to web api
+                        HttpResponseMessage req = await client.PutAsync($"Slot?roomid={bookedSlot.RoomID}&startTime={StartTime}", content);
+
+                        //Checking whether the request is successfull or not
+                        if (req.IsSuccessStatusCode)
+                        {
+                            ViewBag.Message = "Slot has been booked!";
+                            return View();
+                        }
+                        else
+                        {
+                            ViewBag.Message = "Booking failled.";
+                            return View(stdSlot);
+                        }
                     }
                 }
             }
-            return RedirectToAction(nameof(ListSlots),new { id = $"{bookedSlot.StudentID}@student.rmit.edu.au"});
-   
         }
 
-        // GET: Students/Edit/5
-        public async Task<IActionResult> CancelBooking(string id)
+        public async Task<IActionResult> ListBookedSlots(string id)
         {
             if (id == null)
             {
@@ -221,16 +222,48 @@ namespace ASR.Controllers
 
             if (student == null)
             {
+                ViewBag.Message = "Student not found.";
+                return View();
+            }
+
+            var studentSlots = slots.Where(s => s.StudentID == studentId);
+
+            if (studentSlots == null)
+            {
+                ViewBag.Message = "No Booking Schedule";
+                return View();
+            }
+
+            return View(studentSlots);
+        }
+
+        // GET: Students/Edit/5
+        public async Task<IActionResult> CancelBooking(string id, string roomid, string startTime)
+        {
+            if (id == null)
+            {
                 return NotFound();
             }
 
-            var studentSlot = slots.FirstOrDefault(s => s.StudentID == studentId);
-
-            if(studentSlot == null)
+            ViewBag.id = id;
+            ViewBag.Message = "";
+            var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.Student = student.FirstName + " " + student.LastName;
+ 
+            if (student == null)
             {
-                ViewBag.Message = "No Booking Schedule";
+                ViewBag.Message = "Student not found.";
+                return View();
             }
 
+            var studentSlot = await GetSlot(roomid, startTime);
+
+            if (studentSlot == null)
+            {
+                ViewBag.Message = "No Booking Schedule";
+                return View();
+            }
             return View(studentSlot);
         }
 
@@ -241,12 +274,9 @@ namespace ASR.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(Slot cancelledSlot)
         {
-           
-            var dateSlot = cancelledSlot.StartTime.Date;
-            var timeSlot = Request.Form["timeSlot"];
+            ViewBag.Message = "";
             var studentId = Request.Form["StudentID"];
             var student = await GetStudent(studentId);
-            cancelledSlot.StartTime = cancelledSlot.StartTime + TimeSpan.Parse(timeSlot);
             var StartTime = cancelledSlot.StartTime.ToString("dd/MM/yyyy HH:mm");
             ViewBag.id = studentId+"@student.rmit.edu.id";
             ViewBag.Student = student.FirstName + " " + student.LastName;
@@ -288,8 +318,7 @@ namespace ASR.Controllers
                         ModelState.AddModelError("", "Cancellation failed.");
                         cancelledSlot.StudentID = studentId;
                         return View(cancelledSlot);
-                    }
-                  
+                    }                 
                 }
             }
             else
@@ -297,42 +326,7 @@ namespace ASR.Controllers
                 ViewBag.Message = "Booking schedule not found.";
                 return View();
             }
-            //return RedirectToAction(nameof(ListSlots), new { id = $"{studentId}@student.rmit.edu.au"});
-
-        }
-
-        // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Student
-                .FirstOrDefaultAsync(m => m.StudentID == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
-        }
-
-        // POST: Students/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var student = await _context.Student.FindAsync(id);
-            _context.Student.Remove(student);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool StudentExists(string id)
-        {
-            return _context.Student.Any(e => e.StudentID == id);
+    
         }
 
         //Get one student

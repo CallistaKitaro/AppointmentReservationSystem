@@ -11,10 +11,17 @@
 
 <h2>Slot Delete Confirm</h2>
 
+<h4>Student Name : @ViewBag.StaffName </h4>
+<hr />
+
 @if (ViewBag.Message != "")
 {
     <h2>@ViewBag.Message</h2>
-    <hr />
+
+    <div>
+        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Remove other Slots</a>
+    </div>
+
 }
 else
 {

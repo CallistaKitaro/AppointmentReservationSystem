@@ -11,59 +11,73 @@
 
 <h2>List Schedules</h2>
 
-<div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room.RoomName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.StartTime)
-                </th>
-                <th>Time</th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Staff)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Student)
-                </th>
-                <th>Note</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Room.RoomName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
-                </td>
-                <td>
-                    <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
-                    <p>@Html.DisplayFor(modelItem => item.Staff.FirstName)</p>
-                </td>
-                <td>
-                    <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
-                    <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
-                </td>
-                @if (item.StudentID != null)
+<h4>Student Name : @ViewBag.StudentName </h4>
+<h4>Student Email : @ViewBag.id </h4>
+
+<hr />
+
+@if (ViewBag.Message != "")
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Room.RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StartTime)
+                    </th>
+                    <th>Time</th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Staff)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Student)
+                    </th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
                 {
-                    <td>Booked!</td>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Room.RoomName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                        </td>
+                        <td>
+                            <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                            <p>@Html.DisplayFor(modelItem => item.Staff.FirstName)</p>
+                        </td>
+                        <td>
+                            <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                            <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                        </td>
+                        @if (item.StudentID != null)
+                        {
+                            <td>Booked!</td>
+                        }
+                        else
+                        {
+                            <td>
+                                @Html.ActionLink("Available", "MakeBooking", new { id = @ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                            </td>
+                        }
+                    </tr>
                 }
-                else
-                {
-                    <td>
-                        @Html.ActionLink("Available", "MakeBooking", new { id=@ViewBag.id , roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
-                    </td>
-                }
-            </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
+
+}
+
