@@ -260,6 +260,7 @@ namespace ASR.Controllers
                     if (req.IsSuccessStatusCode)
                     {
                         ViewBag.Message = "Slot has been cancelled!";
+                        return View();
                     }
                     else
                     {
@@ -272,10 +273,10 @@ namespace ASR.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Booking schedule not found.");
-               
+                ViewBag.Message = "Booking schedule not found.";
+                return View();
             }
-            return RedirectToAction(nameof(ListSlots), new { id = $"{studentId}@student.rmit.edu.au"});
+            //return RedirectToAction(nameof(ListSlots), new { id = $"{studentId}@student.rmit.edu.au"});
 
         }
 
