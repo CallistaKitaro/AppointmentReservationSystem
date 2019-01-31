@@ -6,7 +6,7 @@
 <section class="main-content">
     <img src="~/images/book-bg.jpg" alt="open book image" />
 
-    <div class="body-content">
+    <div class="body-content content-area">
         <div class="col-sm-10">
             <div class="jumbotron">
                 <h1>Appointment Scheduling and Reservation System</h1>
@@ -14,8 +14,11 @@
                 <p>The easier way to schedule appointments between student and staff</p>
                 <a class="btn btn-lg btn-success" asp-area="Identity" asp-page="/Account/Register" role="button">Register</a>
                 <a class="btn btn-lg btn-success" asp-area="Identity" asp-page="/Account/Login" role="button">Login</a>
-
             </div>
         </div>
     </div>
 </section>
+
+@section navigation{
+    <partial name="_SidebarNav" />
+}

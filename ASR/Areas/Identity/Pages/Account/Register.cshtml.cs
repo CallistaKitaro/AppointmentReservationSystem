@@ -110,9 +110,15 @@ namespace ASR.Areas.Identity.Pages.Account
                 
 
                 if ((staffEmailRegex.IsMatch(Input.Email) && !staffIDRegex.IsMatch(Input.UserID)) ||
-                    (studentEmailRegex.IsMatch(Input.Email) && !studentIDRegex.IsMatch(Input.UserID)))
+                    (studentEmailRegex.IsMatch(Input.Email) && !studentIDRegex.IsMatch(Input.UserID)) )
                 {
                     ModelState.AddModelError("", "Email and ID type does not match");
+                    return Page();
+                }
+
+                if (Input.Email.Substring(0, 6) != Input.UserID)
+                {
+                    ModelState.AddModelError("", "Please use your own RMIT email only");
                     return Page();
                 }
 

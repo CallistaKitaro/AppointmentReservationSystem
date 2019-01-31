@@ -158,6 +158,12 @@ namespace ASR.Areas.Identity.Pages.Account
                     return Page();
                 }
 
+                if (Input.Email.Substring(0, 6) != Input.UserID)
+                {
+                    ModelState.AddModelError("", "Please use your own RMIT email only");
+                    return Page();
+                }
+
                 var user = new AccountUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user);
 

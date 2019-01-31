@@ -13,15 +13,9 @@
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-united.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-faq.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
-
-    @*<environment exclude="Development">
-            <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        </environment>*@
 
 </head>
 <body>
@@ -32,20 +26,14 @@
             </div>
         </header>
 
-        <partial name="_SidebarNav" />
-
         @RenderBody()
-    </main>
 
-    
-    @*<footer>
-        <p>&copy; 2019 - ASR</p>
-    </footer>*@
-
-    @*@if (IsSectionDefined("navigation"))
+        @if (IsSectionDefined("navigation"))
         {
             @RenderSection("navigation", false)
-        }*@
+        }
+
+    </main>
 
     @*<partial name="_CookieConsentPartial" />*@
 
