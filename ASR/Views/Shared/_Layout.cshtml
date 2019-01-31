@@ -8,72 +8,47 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-    <title>@ViewData["Title"] - ASR</title>
+    <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond" rel="stylesheet">
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-united.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+
+    @*<environment exclude="Development">
+            <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        </environment>*@
+
 </head>
-<body>  
-    <header class="clearfix img-rounded" style="height: 75vh; background:url(~/images/ASRLogo.jpg) no-repeat center center; background-size: cover; margin-top:-50px">
-        <img class="img-fluid" src="~/images/ASRLogo.jpg" style="height:75vh; width:100%;margin-top:unset" alt="ASR Log">
-    </header>
+<body>
+    <main>
+        <header id="banner" class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="navbar-header banner-logo">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand title">Appointment Scheduling and Reservation System</a>
+            </div>
+        </header>
+
+        <partial name="_SidebarNav" />
+
+        @RenderBody()
+    </main>
+
     
-    <section id="navCall">
-        @if (IsSectionDefined("navigation"))
+    @*<footer>
+        <p>&copy; 2019 - ASR</p>
+    </footer>*@
+
+    @*@if (IsSectionDefined("navigation"))
         {
             @RenderSection("navigation", false)
-        }
-        else
-        {
+        }*@
 
-            <nav class="navbar navbar-inverse navbar-static-top">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">ASR</a>
-                    </div>
-                    <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav">
-                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li><a asp-area="" asp-controller="Home" asp-action="FAQ">FAQ</a></li>
-                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>                          
-                            @if (User.Identity.IsAuthenticated)
-                            {                                     
-                                <li><a asp-area="" asp-controller="Staffs" asp-action="Index" asp-route-id="@User.Identity.Name">Staff</a></li>
-                                <li><a asp-area="" asp-controller="StudentS" asp-action="Index" asp-route-id="@User.Identity.Name">Student</a></li>
-                            }
-                         
-                        </ul>
-                        <partial name="_LoginPartial" />
-                    </div>
-                </div>
-            </nav>
+    @*<partial name="_CookieConsentPartial" />*@
 
-        }
-    </section>
-
-    <partial name="_CookieConsentPartial" />
-
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - ASR</p>
-        </footer>
-    </div>
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>

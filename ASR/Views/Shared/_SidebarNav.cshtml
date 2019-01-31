@@ -1,0 +1,28 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@*@section Navigation {
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary ">
+            <div class="container">
+                <div class="navbar-header">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">ASR</a>
+                </div>
+
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="" asp-controller="Home" asp-action="FAQ">FAQ</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" asp-controller="Staffs" asp-action="Index" asp-route-id="@User.Identity.Name">Staff</a></li>
+                            <li><a asp-area="" asp-controller="StudentS" asp-action="Index" asp-route-id="@User.Identity.Name">Student</a></li>
+                        }
+
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    }*@
