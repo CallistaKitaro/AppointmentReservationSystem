@@ -47,7 +47,7 @@ namespace ASR
 
             //Simplify registration password
             services.AddIdentity<AccountUser, IdentityRole>(options =>
-            {
+            {           
                 options.Password.RequiredLength = 3;
                 options.Password.RequireDigit = options.Password.RequireNonAlphanumeric =
                     options.Password.RequireUppercase = options.Password.RequireLowercase = false;

@@ -9,45 +9,57 @@
     @await Html.PartialAsync("_StaffPartialView")
 }
 
-<h1>Room Availability</h1>
+@if (ViewBag.Message != "")
+{
+    <h2>@ViewBag.Message</h2>
 
-<form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="get">
-    <p>
-        <label>Input search date: </label>
-        <input type="date" name="SearchDate" />
-        <input type="Submit" value="filter" />
-    </p>
-</form>
+    <div>
+        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
+    </div>
+}
+else
+{
+    <h1>Room Availability</h1>
 
-<h3>
-    Availability rooms on @ViewBag.SearchDate
-</h3>
-<hr />
+    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
+        <p>
+            <label>Input search date: </label>
+            <input type="date" name="SearchDate" />
+            <input type="Submit" value="filter" />
+        </p>
+    </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Availability)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <h3>
+        Availability rooms on @ViewBag.SearchDate
+    </h3>
+    <hr />
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Availability)
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.RoomName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Availability)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoomName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Availability)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 

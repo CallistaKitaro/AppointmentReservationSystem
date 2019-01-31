@@ -6,18 +6,22 @@
 }
 
 @section navigation
-{
+    {
     @await Html.PartialAsync("_StudentPartialView")
 }
+
+<h4>Student Name : @ViewBag.StudentName </h4>
+<h4>Student Email : @ViewBag.id </h4>
+<hr />
 
 <h2>Staff Availability</h2>
 
 <form class="form-group" asp-controller="Students" asp-action="StaffAvailability" method="get">
     <p>
-        <select class="form-group"  asp-for="searchStaff" asp-items="Model.staffID" >
+        <select class="form-group" asp-for="searchStaff" asp-items="Model.staffID">
             <option value="">All</option>
         </select>
-        <input class="btn btn-group-xs"  type="submit" value="Filter" />
+        <input class="btn btn-group-xs" type="submit" value="Filter" />
     </p>
 </form>
 
@@ -37,28 +41,29 @@
     <tbody>
         @foreach (var item in Model.Slots)
         {
-        <tr>         
-            <td>
-                @Html.DisplayFor(modelItem => item.StaffID)
-            </td>   
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
-            </td>
-                    
-            @if (item.StudentID != null)
-            {
-                <td>Not Available</td>
-            }
-            else
-            {
+            <tr>
                 <td>
-                    @Html.ActionLink("Details", "SlotDetails", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                    @Html.DisplayFor(modelItem => item.StaffID)
                 </td>
-            }
-        </tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                </td>
+
+                @if (item.StudentID != null)
+                {
+                    <td>Not Available</td>
+                }
+                else
+                {
+                    <td>
+                        @Html.ActionLink("Details", "SlotDetails", new { id=ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                    </td>
+                }
+            </tr>
         }
     </tbody>
 </table>
+

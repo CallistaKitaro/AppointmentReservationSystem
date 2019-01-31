@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ASR.Models.Slot>
+
+@{
+    ViewData["Title"] = "List Booked Slot";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    @await Html.PartialAsync("_StudentPartialView")
+}
+
+<h2>List Booked Slot</h2>
+
+<h4>Student Name : @ViewBag.Student </h4>
+<h4>Student Email : @ViewBag.id </h4>
+
+<hr />
+
+@if (ViewBag.Message != "")
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Room.RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StartTime)
+                    </th>
+                    <th>Time</th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Staff)
+                    </th>                   
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Room.RoomName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                    </td>
+                    <td>
+                        <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                        <p>@Html.DisplayFor(modelItem => item.Staff.FirstName) @Html.DisplayFor(modelItem => item.Staff.LastName)</p>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Cancel booking", "CancelBooking", new { id = @ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+
