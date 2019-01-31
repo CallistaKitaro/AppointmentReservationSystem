@@ -3,43 +3,19 @@
     Layout = "_Layout";
 }
 
-@*<section class="main-content">
-    <div class="container authentication-box">
-        <ul class="nav nav-tabs ">
-            <li class="nav-item">
-                <a class="nav-link active show" data-toggle="tab" href="#login">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link show" data-toggle="tab" href="#register">Register</a>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane active show" id="login">
-
-            </div>
-
-            <div class="tab-pane fade" id="register">
-
-            </div>
-        </div>
-    </div>
-</section>*@
-
-
 <section class="main-content">
     <img src="~/images/book-bg.jpg" alt="open book image" />
 
     <div class="body-content">
+        <div class="col-sm-10">
+            <div class="jumbotron">
+                <h1>Appointment Scheduling and Reservation System</h1>
+                <hr />
+                <p>The easier way to schedule appointments between student and staff</p>
+                <a class="btn btn-lg btn-success" asp-area="Identity" asp-page="/Account/Register" role="button">Register</a>
+                <a class="btn btn-lg btn-success" asp-area="Identity" asp-page="/Account/Login" role="button">Login</a>
 
-
-        <div class="jumbotron">
-            <h1>Appointment Scheduling and Reservation System</h1>
-            <p>The easier way to schedule appointments between student and staff</p>
-            <p>
-                <a class="btn btn-lg btn-primary" a asp-area="Identity" asp-page="/Account/Login" role="button">Login</a>
-            </p>
+            </div>
         </div>
-
     </div>
 </section>

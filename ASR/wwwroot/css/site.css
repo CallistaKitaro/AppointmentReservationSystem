@@ -39,15 +39,12 @@ body {
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    position: absolute;
-    top: 120px;
-    left: 300px;
-
     padding-left: 15px;
     padding-right: 15px;
+    position: absolute;
+    top: 120px;
+    left: 250px;
 }
-
-
 
 
 
