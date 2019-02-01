@@ -5,15 +5,13 @@
     Layout = "_Layout";
 }
 
-@section navigation{
-    @await Html.PartialAsync("_StaffPartialView")
-}
 
 <h1>Staff Homepage </h1>
-
 <h2 class="form-control-static">Welcome @Model.FirstName @Model.LastName </h2>
 <h3>Email : @Model.Email</h3>
-<br/>
+<br />
 
-
+@section navigation{
+    <partial name="_SidebarNav" />
+}
 

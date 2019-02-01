@@ -46,17 +46,22 @@ namespace ASR.Areas.Identity.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; }
 
+        Regex staffIDRegex = new Regex("^(e|E)\\d{5}$");
+        Regex studentIDRegex = new Regex("^(s|S)\\d{7}$");
+        Regex staffEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@rmit.edu.au");
+        Regex studentEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@student.rmit.edu.au");
+
         public class InputModel
         {
             [Required]
             [EmailAddress]
-            [RegularExpression(@"^s\d{7}@student.rmit.edu.au|e\d{5}@rmit.edu.au$",
+            [RegularExpression(@"^(s|S)\d{7}@student.rmit.edu.au|(e|E)\d{5}@rmit.edu.au$",
                 ErrorMessage = "RMIT University email only")]
             public string Email { get; set; }
 
             [Required]
             [Display(Name = "User ID")]
-            [RegularExpression(@"^s\d{7}|e\d{5}", ErrorMessage = "Invalid user ID")]
+            [RegularExpression(@"^(s|S)\d{7}|(e|E)\d{5}", ErrorMessage = "Invalid user ID")]
             public string UserID { get; set; }
 
             [Required]
@@ -96,6 +101,18 @@ namespace ASR.Areas.Identity.Pages.Account
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
             if (result.Succeeded)
             {
+                var loginMail = info.Principal.Claims.FirstOrDefault(e => (staffEmailRegex.IsMatch(e.Value) || studentEmailRegex.IsMatch(e.Value))).Value;
+
+                // Redirect to each individual index page depending on email used
+                if (staffEmailRegex.IsMatch(loginMail))
+                {
+                    returnUrl = Url.Content($"~/Staffs/Index/{loginMail}");
+                }
+                else if (studentEmailRegex.IsMatch(loginMail))
+                {
+                    returnUrl = Url.Content($"~/Students/Index/{loginMail}");
+                }
+
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
             }
@@ -133,24 +150,20 @@ namespace ASR.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 // If email is already in use for login
-                if (_context.Users.Any(e => e.Email == Input.Email))
+                if (_context.Users.Any(e => e.Email == Input.Email.ToLower()))
                 {
                     ModelState.AddModelError("", "This email has already exist");
                     return Page();
                 }
 
                 //if email is new but user id already exist
-                if (_context.Users.Any(e => e.StaffID == Input.UserID) || _context.Users.Any(e => e.StudentID == Input.UserID))
+                if (_context.Users.Any(e => e.StaffID == Input.UserID.ToLower()) || _context.Users.Any(e => e.StudentID == Input.UserID.ToLower()))
                 {
                     ModelState.AddModelError("", "This user ID has already exist");
                     return Page();
                 }
 
-                Regex staffIDRegex = new Regex("^(e|E)\\d{5}$");
-                Regex studentIDRegex = new Regex("^(s|S)\\d{7}$");
-                Regex staffEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@rmit.edu.au");
-                Regex studentEmailRegex = new Regex(@"([a-zA-Z0-9_\-\.]+)\@student.rmit.edu.au");
-
+                
                 if ((staffEmailRegex.IsMatch(Input.Email) && !staffIDRegex.IsMatch(Input.UserID)) ||
                     (studentEmailRegex.IsMatch(Input.Email) && !studentIDRegex.IsMatch(Input.UserID)))
                 {
@@ -158,13 +171,14 @@ namespace ASR.Areas.Identity.Pages.Account
                     return Page();
                 }
 
-                if (Input.Email.Substring(0, 6) != Input.UserID)
+                if (((staffEmailRegex.IsMatch(Input.Email)) && (Input.Email.Substring(0, 6).ToLower() != Input.UserID.ToLower())) ||
+                    ((studentEmailRegex.IsMatch(Input.Email)) && (Input.Email.Substring(0, 8).ToLower() != Input.UserID.ToLower())))
                 {
-                    ModelState.AddModelError("", "Please use your own RMIT email only");
+                    ModelState.AddModelError("", "Please use your own RMIT credentials only");
                     return Page();
                 }
 
-                var user = new AccountUser { UserName = Input.Email, Email = Input.Email };
+                var user = new AccountUser { UserName = Input.Email.ToLower(), Email = Input.Email.ToLower() };
                 var result = await _userManager.CreateAsync(user);
 
                 if (staffEmailRegex.IsMatch(Input.Email))
@@ -173,7 +187,7 @@ namespace ASR.Areas.Identity.Pages.Account
 
                     var staff = new Staff
                     {
-                        StaffID = Input.UserID,
+                        StaffID = Input.UserID.ToLower(),
                         FirstName = Input.FirstName,
                         Email = Input.Email,
                     };
@@ -182,7 +196,7 @@ namespace ASR.Areas.Identity.Pages.Account
                     await _context.SaveChangesAsync();
 
                     //Adding the staffID column at AspNetUser Table
-                    _context.Users.FirstOrDefault(u => u.Email == Input.Email).StaffID = staff.StaffID;
+                    _context.Users.FirstOrDefault(u => u.Email == Input.Email.ToLower()).StaffID = staff.StaffID;
                     await _context.SaveChangesAsync();
 
                 }
@@ -192,7 +206,7 @@ namespace ASR.Areas.Identity.Pages.Account
 
                     var student = new Student
                     {
-                        StudentID = Input.UserID,
+                        StudentID = Input.UserID.ToLower(),
                         FirstName = Input.FirstName,
                         Email = Input.Email,
                     };
@@ -201,7 +215,7 @@ namespace ASR.Areas.Identity.Pages.Account
                     await _context.SaveChangesAsync();
 
                     //Adding the studentID column at AspNetUser Table
-                    _context.Users.FirstOrDefault(u => u.Email == Input.Email).StudentID = student.StudentID;
+                    _context.Users.FirstOrDefault(u => u.Email == Input.Email.ToLower()).StudentID = student.StudentID;
                     await _context.SaveChangesAsync();
                 }
                 else
@@ -215,6 +229,18 @@ namespace ASR.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        // Intial login after sign in with external provider
+                        if (staffEmailRegex.IsMatch(Input.Email))
+                        {
+                            returnUrl = Url.Content($"~/Staffs/Index/{Input.Email}");
+                        }
+                        else if (studentEmailRegex.IsMatch(Input.Email))
+                        {
+                            returnUrl = Url.Content($"~/Students/Index/{Input.Email}");
+                        }
+
+                        // Create a success page?
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return LocalRedirect(returnUrl);

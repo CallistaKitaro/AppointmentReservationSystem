@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<AccountUser> SignInManager
+@inject UserManager<AccountUser> UserManager
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -22,7 +27,19 @@
     <main>
         <header id="banner" class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="navbar-header banner-logo">
-                <a asp-controller="Home" asp-action="Index" class="navbar-brand title">A.S.R.</a>
+
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Home" asp-action="Index" class="navbar-brand title">A.S.R.</a>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("staff"))
+                {
+                    <a asp-controller="Staffs" asp-action="Index" asp-route-id="@UserManager.GetUserName(User)" class="navbar-brand title">A.S.R.</a>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("student"))
+                {
+                    <a asp-controller="Students" asp-action="Index" asp-route-id="@UserManager.GetUserName(User)" class="navbar-brand title">A.S.R.</a>
+                }
             </div>
         </header>
 

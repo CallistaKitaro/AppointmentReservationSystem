@@ -12,25 +12,37 @@
 <nav class="card border-secondary sidebar">
     <h3 class="card-header border-secondary bg-light">Navigation</h3>
 
+    @if (SignInManager.IsSignedIn(User))
+    {
     <div class="list-group list-group-flush">
-        @if (SignInManager.IsSignedIn(User))
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary list-group-item ">Home</a>
+
+        @if (User.Identity.IsAuthenticated && User.IsInRole("staff"))
         {
-            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="navbar-right">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Welcome @UserManager.GetUserName(User)!</a>
-                    </li>
-                    <li>
-                        <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
-                    </li>
-                </ul>
-            </form>
+            <a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">List Schedules</a>
+            <a asp-area="" asp-controller="Staffs" asp-action="RoomAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Room Availability</a>
+            <a asp-area="" asp-controller="Staffs" asp-action="SlotCreate" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Create a Slot</a>
+            <a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Remove a Slot</a>
         }
-        else
+        @if (User.Identity.IsAuthenticated && User.IsInRole("student"))
         {
-            <a asp-controller="Home" asp-action="Index" class="list-group-item ">Home</a>
-            <a asp-controller="Home" asp-action="FAQ" class="list-group-item ">F.A.Q.</a>
-            <a asp-controller="Home" asp-action="Contact" class="list-group-item active">Contact</a>
+            <a asp-area="" asp-controller="Students" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Available Slots</a>
+            <a asp-area="" asp-controller="Students" asp-action="StaffAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Staff Availability</a>
+            <a asp-area="" asp-controller="Students" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Make a Booking</a>
+            <a asp-area="" asp-controller="Students" asp-action="ListBookedSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Cancel a Booking</a>
         }
+
+        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="btn btn-outline-primary list-group-item">
+            <a href="#" onclick="document.getElementById('logoutForm').submit()">Logout</a>
+        </form>
     </div>
+    }
+    else
+    {
+        <div class="list-group list-group-flush">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary list-group-item ">Home</a>
+            <a asp-controller="Home" asp-action="FAQ" class="btn btn-outline-primary list-group-item ">F.A.Q.</a>
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-primary list-group-item">Contact</a>
+        </div>
+    }
 </nav>
