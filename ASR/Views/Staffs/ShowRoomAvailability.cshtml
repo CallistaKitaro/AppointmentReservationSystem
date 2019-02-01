@@ -4,9 +4,9 @@
     ViewData["Title"] = "Room Availability";
     Layout = "_Layout";
 }
-@section navigation
-    {
-    @await Html.PartialAsync("_StaffPartialView")
+
+@section navigation{
+    @await Html.PartialAsync("_StaffPartialView");
 }
 
 @if (ViewBag.Message != "")
@@ -21,10 +21,10 @@ else
 {
     <h1>Room Availability</h1>
 
-    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" asp-route-id="@ViewBag.id" method="post">
+    <form asp-controller="Staffs" asp-action="ShowRoomAvailability" method="post">
         <p>
             <label>Input search date: </label>
-            <input type="date" name="SearchDate" />
+            <input type = "date" name ="SearchDate" value="2019-01-01" />
             <input type="Submit" value="filter" />
         </p>
     </form>

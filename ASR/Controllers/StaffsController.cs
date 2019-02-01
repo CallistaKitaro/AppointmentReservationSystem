@@ -94,6 +94,7 @@ namespace ASR.Controllers
         [HttpGet]
         public IActionResult RoomAvailability(string id)
         {
+            ViewBag.Message = "";
             if (id == null)
             {
                 return NotFound();
@@ -105,11 +106,12 @@ namespace ASR.Controllers
 
         //Post: Search Rooms availability
         [HttpPost]
-        public async Task<IActionResult> ShowRoomAvailability(string id)
+        public async Task<IActionResult> ShowRoomAvailability(string id, string SearchDate)
         {
             ViewBag.Message = "";
-            DateTime searchDate;
-            //if (DateTime.Parse(Request.Form["SearchDate"]).Date==DateTime.Parse("1/01/0001"))
+            
+            //DateTime searchDate;
+            //if (!String.IsNullOrEmpty(Request.Form["SearchDate"]))
             //{
             //    searchDate = DateTime.Today.Date;
             //}
@@ -118,7 +120,7 @@ namespace ASR.Controllers
             //    searchDate = DateTime.Parse(Request.Form["SearchDate"]).Date;
             //}
 
-            searchDate = DateTime.Parse(Request.Form["SearchDate"]).Date;
+            var searchDate = Request.Form["SearchDate"];
 
             ViewBag.SearchDate = searchDate;
             ViewBag.id = id;          
