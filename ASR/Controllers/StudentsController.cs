@@ -35,20 +35,7 @@ namespace ASR.Controllers
             {
                 return NotFound();
             }
-
-            //ViewBag.id = id;
-            //var studentId = id.Substring(0, 8);
-
-            ////Get Student
-            //Student student = await GetStudent(studentId);
-
-            //if(student == null)
-            //{
-            //    return NotFound();
-            //}
-            //return View(student);
-
-
+            
             // Index page show students' appointment today, if any
             ViewBag.id = id;
             ViewBag.Message = "";
@@ -56,7 +43,7 @@ namespace ASR.Controllers
             var student = await GetStudent(studentId);
             ViewBag.Student = student.FirstName + " " + student.LastName;
             List<Slot> slots = await GetAllSlots();
-
+            
             if (student == null)
             {
                 ViewBag.Message = "Student not found.";

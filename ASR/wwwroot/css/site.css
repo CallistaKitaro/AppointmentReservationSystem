@@ -89,6 +89,10 @@ body {
 
 
 /* Tables */
+.table{
+    width: 60vw;
+}
+
 .table-bordered {
     border: 2px solid #e9ecef;
 }
