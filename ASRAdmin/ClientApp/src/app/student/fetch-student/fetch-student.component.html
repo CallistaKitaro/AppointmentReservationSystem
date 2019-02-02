@@ -21,7 +21,7 @@
       <td>{{ std.email }}</td>
       <td></td>
       <td>
-        <a [routerLink]="" (click)="editStudent(std.studentID)">Edit | </a>
+        <a [routerLink]="['/add-student',std.studentID]">Edit | </a>
         <a [routerLink]="" (click)="deleteStudent(std.studentID)">Delete</a>
       </td>
     </tr>

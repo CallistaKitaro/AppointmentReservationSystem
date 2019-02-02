@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../../services/student.service';
 import { Student } from '../../Models/student';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'fetch-student',
@@ -10,7 +11,7 @@ import { Student } from '../../Models/student';
 export class FetchStudentComponent implements OnInit {
   stdList: Student[];
 
-  constructor(private _studentService: StudentService)
+  constructor(private _studentService: StudentService, private _router: Router)
   {
     this.getStudents();
   }
@@ -35,5 +36,10 @@ export class FetchStudentComponent implements OnInit {
     }
 
   }
+
+  //editStudent(stdID)
+  //{
+  //  this._router.navigate(['/add-student/', stdID])
+  //}
 
 }

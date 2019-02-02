@@ -37,6 +37,16 @@
                 <span class='glyphicon glyphicon-th-list'></span> Add Student
               </a>
             </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/fetch-staff"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-education'></span> Staff
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/add-staff"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Add Staff
+              </a>
+            </li>
           </ul>
         </div>
     </div>

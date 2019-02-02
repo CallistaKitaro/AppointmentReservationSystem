@@ -1,15 +1,15 @@
 <header>
-  <h2>{{title}} Student to ASR System</h2>
+  <h2>{{title}} Staff to ASR System</h2>
 </header>
 
 <form [formGroup]="form"
       (ngSubmit)="save()">
   
     <div class="form-group row">
-      <label for="studentID">Student ID</label>
-      <div><input type="text" name="studentID" id="studentID" formControlName="studentID"></div>
-      <div *ngIf="form.get('studentID').hasError('pattern')" class="error">
-        Student ID should withs and followed with 7 numbers
+      <label for="staffID">Staff ID</label>
+      <div><input type="text" name="staffID" id="staffID" formControlName="staffID"></div>
+      <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
+        Staff ID should with e and followed with 5 numbers
       </div>
     </div>
     <div class="form-group row">
@@ -30,7 +30,7 @@
       <label for="email">Email</label>
       <div><input type="text" name="email" id="email" formControlName="email"></div>
       <div *ngIf="form.get('email').hasError('pattern')" class="error">
-        Student email should studentID@student.rmit.edu.au.
+        Staff email should staffID@rmit.edu.au.
       </div>
     </div>
     <div class="form-group row">
