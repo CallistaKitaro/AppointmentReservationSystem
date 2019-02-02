@@ -229,7 +229,7 @@ namespace ASR.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        // Intial login after sign in with external provider
+                        // Initial login after sign in with external provider
                         if (staffEmailRegex.IsMatch(Input.Email))
                         {
                             returnUrl = Url.Content($"~/Staffs/Index/{Input.Email}");
@@ -238,12 +238,15 @@ namespace ASR.Areas.Identity.Pages.Account
                         {
                             returnUrl = Url.Content($"~/Students/Index/{Input.Email}");
                         }
-
-                        // Create a success page?
-
+                        
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-                        return LocalRedirect(returnUrl);
+
+                        ViewData["Message"] = "You have been successfully registered into our system";
+                        ViewData["role"] = staffEmailRegex.IsMatch(Input.Email) ? "Staffs" : studentEmailRegex.IsMatch(Input.Email) ? "Students" : "Home";
+                        ViewData["userID"] = Input.Email;
+                        return Page();
+                        //return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)

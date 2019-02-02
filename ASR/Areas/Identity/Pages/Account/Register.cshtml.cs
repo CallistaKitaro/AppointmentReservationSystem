@@ -67,7 +67,7 @@ namespace ASR.Areas.Identity.Pages.Account
 
             [Required]
             [RegularExpression(@"^(s|S)\d{7}@student.rmit.edu.au|(e|E)\d{5}@rmit.edu.au$", 
-                ErrorMessage = "RMIT University email only")]
+                ErrorMessage = "Valid RMIT University email only")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -173,28 +173,12 @@ namespace ASR.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
-                    if (staffEmailRegex.IsMatch(Input.Email))
-                    {
-                        returnUrl = Url.Content($"~/Staffs/Index/{Input.Email.ToLower()}");
-                    }
-                    else if (studentEmailRegex.IsMatch(Input.Email))
-                    {
-                        returnUrl = Url.Content($"~/Students/Index/{Input.Email.ToLower()}");
-                    }
-
-                    //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //    var callbackUrl = Url.Page(
-                    //        "/Account/ConfirmEmail",
-                    //        pageHandler: null,
-                    //        values: new { userId = user.Id, code = code },
-                    //        protocol: Request.Scheme);
-
-                    //    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    //        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+
+                    ViewData["Message"] = "You have been successfully registered into our system";
+                    ViewData["role"] = staffEmailRegex.IsMatch(Input.Email) ? "Staffs" : studentEmailRegex.IsMatch(Input.Email) ? "Students" : "Home";
+                    ViewData["userID"] = Input.Email;
+                    return Page();
                 }
                 foreach (var error in result.Errors)
                 {
