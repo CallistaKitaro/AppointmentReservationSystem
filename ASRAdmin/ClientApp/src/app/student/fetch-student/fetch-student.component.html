@@ -2,27 +2,35 @@
 
 <p>Show all student here.</p>
 
-<!--
- <p *ngIf="!forecasts"><em>Loading...</em></p>
+ <p *ngIf="!stdList"><em>Loading data. Please wait ...</em></p>
 
-<table class='table' *ngIf="forecasts">
+<table class='table' *ngIf="stdList">
   <thead>
     <tr>
-      <th>Date</th>
-      <th>Temp. (C)</th>
-      <th>Temp. (F)</th>
-      <th>Summary</th>
+      <th>StudentID</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let forecast of forecasts">
-      <td>{{ forecast.dateFormatted }}</td>
-      <td>{{ forecast.temperatureC }}</td>
-      <td>{{ forecast.temperatureF }}</td>
-      <td>{{ forecast.summary }}</td>
+    <tr *ngFor="let std of stdList">
+      <td>{{ std.studentID }}</td>
+      <td>{{ std.firstName }}</td>
+      <td>{{ std.lastName }}</td>
+      <td>{{ std.email }}</td>
+      <td></td>
+      <td>
+        <a [routerLink]="" (click)="editStudent(std.studentID)">Edit | </a>
+        <a [routerLink]="" (click)="deleteStudent(std.studentID)">Delete</a>
+      </td>
     </tr>
+    <tr *ngIf="!stdList" && stdList.length = 0>
+      <td colspan="5">
+        No Students to display
+      </td>
+    </tr>
+
   </tbody>
 </table>
 
-
--->

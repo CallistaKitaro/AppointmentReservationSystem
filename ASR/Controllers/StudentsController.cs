@@ -4,15 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ASR.Models;
 using Microsoft.AspNetCore.Authorization;
 using ASR.Data;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
-using System.Net;
-using System.Globalization;
+
 
 namespace ASR.Controllers
 {

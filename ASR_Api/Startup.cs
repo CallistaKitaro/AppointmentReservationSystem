@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ASR_Api.Data;
+﻿using ASR_Api.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace ASR_Api
 {
@@ -30,6 +27,20 @@ namespace ASR_Api
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            // ********************
+            // Setup CORS
+            // ********************
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin(); // For anyone access.
+            corsBuilder.AllowCredentials();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +55,7 @@ namespace ASR_Api
                 app.UseHsts();
             }
 
+            app.UseCors("SiteCorsPolicy");
             app.UseHttpsRedirection();
             app.UseMvc();
         }
