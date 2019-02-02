@@ -1,16 +1,60 @@
-﻿@model ASR.Models.Student
+﻿@model IEnumerable<ASR.Models.Slot>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
 
+<div class="body-content content-area">
+    <h2>Today's Appointment</h2>
+    <hr />
 
-
-<h1>Student Homepage</h1>
-
-<h2 class="form-control-static">Welcome @Model.FirstName  @Model.LastName </h2>
-<h3>Email : @Model.Email</h3>
+    @if (ViewBag.Message != "")
+    {
+        <h2 class="text-danger">@ViewBag.Message</h2>
+    }
+    else
+    {
+        <div>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.Room.RoomName)*@ Room Name
+                        </th>
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.StartTime)*@ Start Time
+                        </th>
+                        <th>Time</th>
+                        <th>
+                            @*@Html.DisplayNameFor(model => model.Staff)*@ Staff
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Room.RoomName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                            </td>
+                            <td>
+                                <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                                <p>@Html.DisplayFor(modelItem => item.Staff.FirstName) @Html.DisplayFor(modelItem => item.Staff.LastName)</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
 
 @section navigation{
     <partial name="_SidebarNav" />

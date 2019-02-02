@@ -89,7 +89,6 @@ namespace ASR.Areas.Identity.Pages.Account
                     {
                         returnUrl = returnUrl ?? Url.Content($"~/Students/Index/{Input.Email}");
                     }
-                    
                     return LocalRedirect(returnUrl);
                 }
                 //if (result.RequiresTwoFactor)

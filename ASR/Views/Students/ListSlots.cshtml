@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ASR.Models.Slot>
+﻿@*@model IEnumerable<ASR.Models.Slot>*@
+@model PaginatedList<ASR.Models.Slot>
 
 @{
     ViewData["Title"] = "List Slots";
@@ -6,78 +7,100 @@
 }
 
 @section navigation{
-    @await Html.PartialAsync("_StudentPartialView")
+    <partial name="_SidebarNav" />
 }
 
-<h2>List Schedules</h2>
+    <div class="body-content content-area">
+        <h2>Available Slots</h2>
 
-<h4>Student Name : @ViewBag.StudentName </h4>
-<h4>Student Email : @ViewBag.id </h4>
+        <hr />
 
-<hr />
+        @using (Html.BeginForm())
+        {
+            <p>
+                Filter by date:
+                <input class="SearchDate form-control-sm input-group-sm date" data-provide="datepicker" name="SearchDate" type="text" value="">
+                <input class="btn btn-sm btn-success" type="submit" value="Search" />
+            </p>
+        }
 
-@if (ViewBag.Message != "")
-{
-    <h2>@ViewBag.Message</h2>
-}
-else
-{
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Room.RoomName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.StartTime)
-                    </th>
-                    <th>Time</th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Staff)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Student)
-                    </th>
-                    <th>Note</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Room.RoomName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StartTime)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
-                        </td>
-                        <td>
-                            <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
-                            <p>@Html.DisplayFor(modelItem => item.Staff.FirstName)</p>
-                        </td>
-                        <td>
-                            <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
-                            <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
-                        </td>
-                        @if (item.StudentID != null)
+        @if (ViewBag.Message != "")
+        {
+            <h2 class="text-danger">@ViewBag.Message</h2>
+        }
+        else
+        {
+            <div>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr class="table-secondary">
+                            <th>
+                                Room Name
+                            </th>
+                            <th>
+                                Start Time
+                            </th>
+                            <th>Time</th>
+                            <th>
+                                Staff
+                            </th>
+                            <th>
+                                Student
+                            </th>
+                            <th>Availability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
-                            <td>Booked!</td>
+                            <tr class="table-light">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Room.RoomName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                                </td>
+                                <td>
+                                    <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
+                                    <p>@Html.DisplayFor(modelItem => item.Staff.FirstName)</p>
+                                </td>
+                                <td>
+                                    <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                                    <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                                </td>
+                                @if (item.StudentID != null)
+                                {
+                                    <td class="text-danger text-center">Booked!</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @Html.ActionLink("Available", "MakeBooking", new { id = @ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }, new { @class = "btn btn-success" })
+                                    </td>
+                                }
+                            </tr>
                         }
-                        else
-                        {
-                            <td>
-                                @Html.ActionLink("Available", "MakeBooking", new { id = @ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
-                            </td>
-                        }
-                    </tr>
+                    </tbody>
+                </table>
+
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
                 }
-            </tbody>
-        </table>
+
+                <a asp-action="ListSlots"
+                   asp-route-page="@(Model.PageIndex - 1)"
+                   class="btn btn-primary @prevDisabled">
+                    Previous
+                </a>
+                <a asp-action="ListSlots"
+                   asp-route-page="@(Model.PageIndex + 1)"
+                   class="btn btn-primary @nextDisabled">
+                    Next
+                </a>
+            </div>
+        }
     </div>
-
-}
-

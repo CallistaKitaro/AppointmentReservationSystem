@@ -5,66 +5,66 @@
 }
 
 @section navigation{
-    @await Html.PartialAsync("_StudentPartialView")
+    <partial name="_SidebarNav" />
 }
 
-<h2>Make a Booking</h2>
+    <div class="body-content content-area">
+        <h2>Make a Booking</h2>
 
-<h4>Student Name : @ViewBag.Student </h4>
-<h4>Student Email : @ViewBag.id </h4>
-<hr />
+        <hr />
 
-@if (ViewBag.Message != "")
-{
-    <h2>@ViewBag.Message</h2>
-    <div>
-        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
-    </div>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="MakeBooking" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <input type="hidden" asp-for="slot.Room.RoomID" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label asp-for="slot.Room.RoomName" class="control-label"></label>
-                    <input type="text" asp-for="slot.Room.RoomName" class="form-control" />
-                    <span asp-validation-for="slot.Room.RoomName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="slot.StartTime" class="control-label"></label>
-                    <input type="text" asp-for="slot.StartTime" class="form-control" />
-
-                </div>
-                <div class="form-group">
-                    <label name="timeSlot" Value="Time" class="control-label"></label>
-                    <input type="text" name="timeSlot" value=@Model.slot.StartTime.TimeOfDay class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label asp-for="slot.StaffID" class="control-label"></label>
-                    <input type="text" asp-for="slot.StaffID" class="form-control" />
-                    <span asp-validation-for="slot.StaffID" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="student.StudentID" class="control-label"></label>
-                    <input type="text" asp-for="student.StudentID" class="form-control" />
-                    <span asp-validation-for="student.StudentID" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Booked" class="btn btn-default" />
-                </div>
-            </form>
+        @if (ViewBag.Message != "")
+        {
+        <div class="alert alert-dismissible alert-warning">
+            <p>@ViewBag.Message</p>
+            <a class="btn btn-success" asp-action="Index" asp-route-id="@ViewBag.id">Home</a>
+            <a class="btn btn-success" asp-action="ListSlots" asp-route-id="@ViewBag.id">List Slots</a>
         </div>
+        }
+        else
+        {
+                <form asp-action="MakeBooking" method="post">
+
+                    @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count() > 0)
+                    {
+                        <div asp-validation-summary="ModelOnly" class="alert alert-dismissible alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <input type="hidden" asp-for="slot.Room.RoomID" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="slot.Room.RoomName" class="control-label"></label>
+                        <input type="text" asp-for="slot.Room.RoomName" class="form-control" readonly/>
+                        <span asp-validation-for="slot.Room.RoomName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="slot.StartTime" class="control-label"></label>
+                        <input type="text" asp-for="slot.StartTime" class="form-control" readonly/>
+
+                    </div>
+                    <div class="form-group">
+                        <label name="timeSlot" Value="Time" class="control-label">Time</label>
+                        <input type="text" name="timeSlot" value=@Model.slot.StartTime.TimeOfDay class="form-control" readonly/>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="slot.StaffID" class="control-label"></label>
+                        <input type="text" asp-for="slot.StaffID" class="form-control" readonly/>
+                        <span asp-validation-for="slot.StaffID" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="student.StudentID" class="control-label"></label>
+                        <input type="text" asp-for="student.StudentID" class="form-control" readonly/>
+                        <span asp-validation-for="student.StudentID" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Book" class="btn btn-success" />
+                        <a class="btn btn-danger" asp-action="ListSlots" asp-route-id="@ViewBag.id">Cancel</a>
+                    </div>
+                </form>
+        }
+
     </div>
-
-    <div>
-        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Back to List</a>
-    </div>
-}
-
-
 

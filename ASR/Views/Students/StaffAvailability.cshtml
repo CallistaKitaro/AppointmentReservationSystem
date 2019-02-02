@@ -5,65 +5,71 @@
     Layout = "_Layout";
 }
 
-@section navigation
-    {
-    @await Html.PartialAsync("_StudentPartialView")
+@section navigation{
+    <partial name="_SidebarNav" />
 }
 
-<h4>Student Name : @ViewBag.StudentName </h4>
-<h4>Student Email : @ViewBag.id </h4>
-<hr />
 
-<h2>Staff Availability</h2>
+    <div class="body-content content-area">
+        <h2>Staff Availability</h2>
+        <hr />
 
-<form class="form-group" asp-controller="Students" asp-action="StaffAvailability" method="get">
-    <p>
-        <select class="form-group" asp-for="searchStaff" asp-items="Model.staffID">
-            <option value="">All</option>
-        </select>
-        <input class="btn btn-group-xs" type="submit" value="Filter" />
-    </p>
-</form>
+        <form class="form-group" asp-controller="Students" asp-action="StaffAvailability" method="get">
+            <p>
+                <select class="form-group form-control-sm" asp-for="searchStaff" asp-items="Model.staffID">
+                    <option value="">All</option>
+                </select>
+                <input class="btn btn-sm btn-success" type="submit" value="Filter" />
+            </p>
+        </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Slots[0].Staff)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Slots[0].StartTime)
-            </th>
-            <th>Time</th>
-            <th>Note</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Slots)
+        @if (ViewBag.Message != "")
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StaffID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
-                </td>
-
-                @if (item.StudentID != null)
-                {
-                    <td>Not Available</td>
-                }
-                else
-                {
-                    <td>
-                        @Html.ActionLink("Details", "SlotDetails", new { id=ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
-                    </td>
-                }
-            </tr>
+            <h2 class="text-danger">@ViewBag.Message</h2>
         }
-    </tbody>
-</table>
+        else
+        {
 
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>
+                            @Html.DisplayNameFor(model => model.Slots[0].Staff)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Slots[0].StartTime)
+                        </th>
+                        <th>Time</th>
+                        <th>Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Slots)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StaffID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                            </td>
+
+                            @if (item.StudentID != null)
+                            {
+                                <td>Not Available</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.ActionLink("Details", "SlotDetails", new { id = ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") })
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>        

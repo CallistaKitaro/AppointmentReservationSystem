@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net;
 using System.Globalization;
+//using X.PagedList;
 
 namespace ASR.Controllers
 {
@@ -36,21 +37,48 @@ namespace ASR.Controllers
                 return NotFound();
             }
 
+            //ViewBag.id = id;
+            //var studentId = id.Substring(0, 8);
+
+            ////Get Student
+            //Student student = await GetStudent(studentId);
+
+            //if(student == null)
+            //{
+            //    return NotFound();
+            //}
+            //return View(student);
+
+
+            // Index page show students' appointment today, if any
             ViewBag.id = id;
+            ViewBag.Message = "";
             var studentId = id.Substring(0, 8);
+            var student = await GetStudent(studentId);
+            ViewBag.Student = student.FirstName + " " + student.LastName;
+            List<Slot> slots = await GetAllSlots();
 
-            //Get Student
-            Student student = await GetStudent(studentId);
-
-            if(student == null)
+            if (student == null)
             {
-                return NotFound();
+                ViewBag.Message = "Student not found.";
+                return View();
             }
-            return View(student);
+
+            var studentSlots = slots.Where(s => s.StudentID == studentId);
+
+            studentSlots = studentSlots.Where(s => (s.StartTime.Date == DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+
+            if (studentSlots == null || !studentSlots.Any())
+            {
+                ViewBag.Message = "You have no appointments today";
+                return View();
+            }
+            
+            return View(studentSlots);
         }
 
         // GET: Students
-        public async Task<IActionResult> ListSlots(string id)
+        public async Task<IActionResult> ListSlots(string id, string searchDate, int? page)
         {
             if (id == null)
             {
@@ -65,13 +93,25 @@ namespace ASR.Controllers
 
             List<Slot> allSlots = new List<Slot>();
             allSlots = await GetAllSlots();
-            if(allSlots == null)
+
+            if (!String.IsNullOrEmpty(searchDate)) //If searching for a specific date
+            {
+                DateTime selectDate = Convert.ToDateTime(searchDate);
+                allSlots = allSlots.Where(s => s.StartTime.Date == selectDate.Date).ToList();
+            }
+            else // If not looking for specific date, look for future booking slots
+            {
+                allSlots = allSlots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+            }
+
+            if (allSlots == null || !allSlots.Any())
             {
                 ViewBag.Message = "No slot available.";
                 return View();
             }
-
-            return View(allSlots);
+            
+            int pageSize = 2;
+            return View(await PaginatedList<Slot>.CreateAsync(allSlots, page ?? 1, pageSize));
         }
 
         // GET: Students/Details/5
@@ -95,6 +135,7 @@ namespace ASR.Controllers
         //Get Staff availability
         public async Task<IActionResult> StaffAvailability(string id , string searchStaff)
         {
+            ViewBag.Message = "";
             ViewBag.id = id;
             var studentId = id.Substring(0, 8);
             var student = await GetStudent(studentId);
@@ -102,10 +143,15 @@ namespace ASR.Controllers
 
             List<Slot> slots = await GetAllSlots();
             var staffId = slots.Select(s => s.StaffID).Distinct().OrderBy(s => s);
-
-            var Slots = slots.Select(s => s);
+            
+            var Slots = slots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour));
             if (!string.IsNullOrEmpty(searchStaff))
-                Slots = slots.Where(s => s.StaffID == searchStaff);
+                Slots = Slots.Where(s => ((s.StaffID == searchStaff)));
+
+            if (Slots == null || !Slots.Any())
+            {
+                ViewBag.Message = "No future slot.";
+            }
 
             return View(new SlotStaffViewModel
             {
@@ -141,7 +187,8 @@ namespace ASR.Controllers
             ViewBag.Message = "";
             var dateSlot = stdSlot.slot.StartTime.Date;
             var timeSlot = Request.Form["timeSlot"];
-            var studentId = Request.Form["StudentID"];
+            var studentId = stdSlot.student.StudentID;
+
             Student student = await GetStudent(studentId);
             stdSlot.slot.StartTime = stdSlot.slot.StartTime + TimeSpan.Parse(timeSlot);
             var StartTime = stdSlot.slot.StartTime.ToString("dd/MM/yyyy HH:mm");
@@ -198,7 +245,7 @@ namespace ASR.Controllers
                         }
                         else
                         {
-                            ViewBag.Message = "Booking failled.";
+                            ViewBag.Message = "Booking failed.";
                             return View(stdSlot);
                         }
                     }
@@ -206,7 +253,7 @@ namespace ASR.Controllers
             }
         }
 
-        public async Task<IActionResult> ListBookedSlots(string id)
+        public async Task<IActionResult> ListBookedSlots(string id, string searchDate, int? page)
         {
             if (id == null)
             {
@@ -226,15 +273,28 @@ namespace ASR.Controllers
                 return View();
             }
 
-            var studentSlots = slots.Where(s => s.StudentID == studentId);
+            var studentSlots = slots.Where(s => (s.StudentID == studentId));
 
-            if (studentSlots == null)
+            if (!String.IsNullOrEmpty(searchDate))//If searching for a specific date
+            {
+                DateTime selectDate = Convert.ToDateTime(searchDate);
+                studentSlots = studentSlots.Where(s => (s.StartTime.Date == selectDate.Date)).ToList();
+            }
+            else // If not looking for specific date, look for all future bookings
+            {
+                slots = slots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+            }
+
+            if (studentSlots == null || !studentSlots.Any())
             {
                 ViewBag.Message = "No Booking Schedule";
                 return View();
             }
 
-            return View(studentSlots);
+            int pageSize = 2;
+            return View(await PaginatedList<Slot>.CreateAsync(studentSlots, page ?? 1, pageSize));
+
+            //return View(studentSlots);
         }
 
         // GET: Students/Edit/5

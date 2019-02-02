@@ -15,25 +15,25 @@
     @if (SignInManager.IsSignedIn(User))
     {
     <div class="list-group list-group-flush">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary list-group-item ">Home</a>
 
         @if (User.Identity.IsAuthenticated && User.IsInRole("staff"))
         {
-            <a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">List Schedules</a>
-            <a asp-area="" asp-controller="Staffs" asp-action="RoomAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Room Availability</a>
-            <a asp-area="" asp-controller="Staffs" asp-action="SlotCreate" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Create a Slot</a>
-            <a asp-area="" asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Remove a Slot</a>
+            <a asp-controller="Staffs" asp-action="Index" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item">Home</a>
+            <a asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">List Schedules</a>
+            <a asp-controller="Staffs" asp-action="RoomAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Room Availability</a>
+            <a asp-controller="Staffs" asp-action="SlotCreate" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Create a Slot</a>
+            <a asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Remove a Slot</a>
         }
         @if (User.Identity.IsAuthenticated && User.IsInRole("student"))
         {
-            <a asp-area="" asp-controller="Students" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Available Slots</a>
-            <a asp-area="" asp-controller="Students" asp-action="StaffAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Staff Availability</a>
-            <a asp-area="" asp-controller="Students" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Make a Booking</a>
-            <a asp-area="" asp-controller="Students" asp-action="ListBookedSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Cancel a Booking</a>
+            <a asp-controller="Students" asp-action="Index" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item">Home</a>
+            <a asp-controller="Students" asp-action="StaffAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Staff Availability</a>
+            <a asp-controller="Students" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Make a Booking</a>
+            <a asp-controller="Students" asp-action="ListBookedSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Cancel a Booking</a>
         }
 
-        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="btn btn-outline-primary list-group-item">
-            <a href="#" onclick="document.getElementById('logoutForm').submit()">Logout</a>
+        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="form-style">
+            <a href="#" class="btn btn-outline-primary list-group-item" onclick="document.getElementById('logoutForm').submit()">Logout</a>
         </form>
     </div>
     }

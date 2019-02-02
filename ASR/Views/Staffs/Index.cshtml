@@ -5,13 +5,13 @@
     Layout = "_Layout";
 }
 
+<div class="body-content content-area">
+    <h1>Welcome @Model.FirstName  @Model.LastName</h1>
+    <h3>@Model.Email</h3>
 
-<h1>Staff Homepage </h1>
-<h2 class="form-control-static">Welcome @Model.FirstName @Model.LastName </h2>
-<h3>Email : @Model.Email</h3>
-<br />
+</div>
+
 
 @section navigation{
     <partial name="_SidebarNav" />
 }
-
