@@ -1,0 +1,21 @@
+<h1>{{title}}</h1>
+
+<p *ngIf="!staffSlots"><em>Please input staff ID</em></p>
+
+<form [formGroup]="form"
+      (ngSubmit)="getSlots()">
+
+  <div class="form-group row">
+    <label for="staffID">Staff ID</label>
+    <div><input type="text" name="staffID" id="staffID" formControlName="staffID"></div>
+    <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
+      Staff ID should with e and followed with 5 numbers
+    </div>
+    <div class="form-group row">
+      <button class="btn" type="submit" [disabled]="!form.valid">Find Slots</button>
+      <button class="btn" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>
+
+<view-slot> </view-slot>

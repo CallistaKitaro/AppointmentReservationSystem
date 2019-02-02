@@ -32,6 +32,26 @@ namespace ASR_Api.Controllers
             return slots;
         }
 
+        // Get ; ASRapi/Slot/staffId
+        [HttpGet]
+        [Route("ByStaffId")]
+        public async Task<ActionResult<IEnumerable<Slot>>> GetSlotByStaffId(string id)
+        {
+            var staffSlots = await _context.Slot.Where(s => s.StaffID == id).ToArrayAsync();
+
+            return staffSlots;
+        }
+
+        // Get ; ASRapi/Slot/studentId
+        [HttpGet]
+        [Route("ByStudentId")]
+        public async Task<ActionResult<IEnumerable<Slot>>> GetSlotByStudentId(string id)
+        {
+            var staffSlots = await _context.Slot.Where(s => s.StudentID == id).ToArrayAsync();
+
+            return staffSlots;
+        }
+
         //Get: ASRapi/Slot
         [HttpGet]
         public async Task<IActionResult> GetSlot(string roomid, string startTime)

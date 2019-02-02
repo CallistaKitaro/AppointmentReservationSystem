@@ -47,6 +47,16 @@
                 <span class='glyphicon glyphicon-th-list'></span> Add Staff
               </a>
             </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/slot-form"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Slot Staff
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/slot-form"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Student Staff
+              </a>
+            </li>
           </ul>
         </div>
     </div>

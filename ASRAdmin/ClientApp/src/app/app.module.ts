@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 
 import { StudentService } from './services/student.service';
 import { StaffService } from './services/staff.service';
-
+import { SlotService } from './services/slot.service';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -19,6 +19,8 @@ import { FetchStudentComponent } from './student/fetch-student/fetch-student.com
 import { AddStudentComponent } from './student/add-student/add-student.component';
 import { FetchStaffComponent } from './staff/fetch-staff/fetch-staff.component';
 import { AddStaffComponent } from './staff/add-staff/add-staff.component';
+import { SlotFormComponent } from './slot/slot-form/slot-form.component';
+import { ViewSlotComponent } from './slot/view-slot/view-slot.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { AddStaffComponent } from './staff/add-staff/add-staff.component';
     FetchStudentComponent,
     AddStudentComponent,
     FetchStaffComponent,
-    AddStaffComponent
+    AddStaffComponent,
+    SlotFormComponent,
+    ViewSlotComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -48,9 +52,11 @@ import { AddStaffComponent } from './staff/add-staff/add-staff.component';
       { path: 'fetch-staff', component: FetchStaffComponent },
       { path: 'add-staff', component: AddStaffComponent },
       { path: "add-staff/:id", component: AddStaffComponent },
+      { path: "slot-form", component: SlotFormComponent },
+      { path: "view-slot/:id", component: ViewSlotComponent },
     ])
   ],
-  providers: [StudentService, StaffService],
+  providers: [StudentService, StaffService, SlotService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

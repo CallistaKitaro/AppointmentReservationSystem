@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StaffService } from '../../services/staff.service';
 import { Router, ActivatedRoute } from "@angular/router";
-import { error } from 'util';
 
 @Component({
     selector: 'add-staff',
@@ -19,9 +18,9 @@ export class AddStaffComponent implements OnInit {
   constructor(private _staffService: StaffService, private _avRoute: ActivatedRoute, private _router: Router)
   {
   
-    if (this._avRoute.snapshot.paramMap.get("id")) {
+    if (this._avRoute.snapshot.paramMap.get("id"))
+    {
       this.staffID = this._avRoute.snapshot.paramMap.get("id");
-      console.log(this.staffID);
     }
     this.form = new FormGroup({
       staffID: new FormControl('', Validators.compose([

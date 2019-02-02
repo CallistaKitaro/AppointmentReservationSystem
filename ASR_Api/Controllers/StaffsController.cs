@@ -31,7 +31,7 @@ namespace ASR_Api.Controllers
             return staffs;
         }
 
-        // GET: ASRapi/Staff/e12345
+        // GET: ASRapi/Staff/staffId
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStaff([FromRoute] string id)
         {
