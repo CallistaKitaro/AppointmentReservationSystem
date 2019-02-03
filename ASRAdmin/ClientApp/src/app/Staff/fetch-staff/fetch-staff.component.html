@@ -1,7 +1,5 @@
 <h1>List Staff</h1>
 
-<p>Show all staff here .</p>
-
  <p *ngIf="!staffList"><em>Loading data. Please wait ...</em></p>
 
 <table class='table table-primary table-bordered table-hover'  *ngIf="staffList">
@@ -25,7 +23,7 @@
         <a class="btn-sm btn-danger" [routerLink]="" (click)="deleteStaff(staff.staffID)">Delete</a>
       </td>
     </tr>
-    <tr *ngIf="!staffList" && staffList.length = 0>
+    <tr *ngIf="!staffList || staffList.length == 0" >
       <td colspan="5">
         No Staffs to display
       </td>

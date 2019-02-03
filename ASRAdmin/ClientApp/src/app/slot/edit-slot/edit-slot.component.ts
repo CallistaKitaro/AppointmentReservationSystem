@@ -59,10 +59,6 @@ export class EditSlotComponent {
 
   update() {
 
-    //if (!this.form.valid) {
-    //  return;
-    //}
-
     // save the new data and return to each staff page
     if (this.page == "e") {
       var staffId = this.form.get('staffID').value + 'All';
@@ -71,7 +67,7 @@ export class EditSlotComponent {
       updatedSlot.roomID = this.form.get('roomID').value;
       updatedSlot.startTime = this.form.get('startTime').value;
       updatedSlot.staffID = this.form.get('staffID').value;
-      if (this.form.get('studentID').value == null) {
+      if (this.form.get('studentID').value == "") {
         updatedSlot.studentID = null;
       } else {
         updatedSlot.studentID = this.form.get('studentID').value;
@@ -85,7 +81,13 @@ export class EditSlotComponent {
     else if (this.page == "s") {
       var studentId = this.form.get('studentID').value;
 
-      this._slotService.updateSlot(this.roomId, this.slotTime, this.form.value).subscribe((data) => {
+      let updatedSlot: Slot = new Slot();
+      updatedSlot.roomID = this.form.get('roomID').value;
+      updatedSlot.startTime = this.form.get('startTime').value;
+      updatedSlot.staffID = this.form.get('staffID').value;
+      updatedSlot.studentID = null;
+
+      this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", studentId]);
       }, error => this.errorMessage = error)
     }

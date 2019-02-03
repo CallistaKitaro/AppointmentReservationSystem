@@ -22,7 +22,7 @@
         <a class="btn-sm btn-danger" *ngIf="page=='e'" [routerLink]="" (click)="deleteSlot(slot.roomID, slot.startTime)">Delete</a>
       </td>
     </tr>
-    <tr *ngIf="!slotList" && slotList.length=0>
+    <tr *ngIf="!slotList || slotList.length == 0">
       <td colspan="5">
         No slot available.
     </tr>

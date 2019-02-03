@@ -47,20 +47,26 @@ export class AddRoomComponent {
       return;
     }
 
-    if (this.title === "Add") {
+    if (this.title == "Add") {
 
       this._roomService.getRooms().subscribe(roomData => this.totalRoom = roomData);
       var sum = this.totalRoom.length;
 
       let newRoom = new Room();
       newRoom.roomID = String(sum + 1);
-      newRoom.roomName = this.form.get('roomName').value;
+      newRoom.roomName = (this.form.get('roomName').value).toUpperCase();
 
       this._roomService.saveRoom(newRoom).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);
       }, error => this.errorMessage = error);
-    } else if (this.title === "Edit") {
-      this._roomService.updateRoom(this.roomID, this.form.value).subscribe((data) => {
+
+    } else if (this.title == "Edit") {
+
+      let newRoom = new Room();
+      newRoom.roomID = this.form.get('roomID').value;
+      newRoom.roomName = (this.form.get('roomName').value).toUpperCase();
+
+      this._roomService.updateRoom(this.roomID, newRoom).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);
       }, error => this.errorMessage = error);
     }

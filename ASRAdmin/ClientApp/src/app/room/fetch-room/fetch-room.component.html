@@ -1,7 +1,5 @@
 <h1>List Room</h1>
 
-<p>Show all rooms here .</p>
-
 <p *ngIf="!roomList"><em>Loading data. Please wait ...</em></p>
 
 <table class='table table-primary table-bordered table-hover' *ngIf="roomList">
@@ -19,7 +17,7 @@
         <a class="btn-sm btn-danger" [routerLink]="" (click)="deleteRoom(room.roomID)">Delete</a>
       </td>
     </tr>
-    <tr *ngIf="!roomList" && staffList.length=0>
+    <tr *ngIf="!roomList || roomList.length == 0" >
       <td colspan="5">
         No Rooms to display
       </td>
