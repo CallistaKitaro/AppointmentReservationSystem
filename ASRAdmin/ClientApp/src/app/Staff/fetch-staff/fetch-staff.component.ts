@@ -34,7 +34,6 @@ export class FetchStaffComponent implements OnInit {
         this.getStaffs();
       }, error => console.error(error));
     }
-
   }
 
   editStaff(staffID)

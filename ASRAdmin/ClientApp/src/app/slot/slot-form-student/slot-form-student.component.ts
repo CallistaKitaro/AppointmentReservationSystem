@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -24,10 +24,9 @@ export class SlotFormStudentComponent {
     if (!this.form.valid) {
       return;
     }
-
+    // return to view student slots
     this.id = this.form.get('studentID').value;
     this._router.navigate(["/view-slot/", this.id]);
-
   }
 
 }

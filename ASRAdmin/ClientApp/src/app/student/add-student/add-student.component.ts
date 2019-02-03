@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StudentService } from '../../services/student.service';
-//import { Student } from '../../Models/student';
 import { Router, ActivatedRoute } from "@angular/router";
-import { error } from 'util';
 
 @Component({
     selector: 'add-student',
@@ -19,11 +17,12 @@ export class AddStudentComponent implements OnInit {
 
   constructor(private _studentService: StudentService, private _avRoute: ActivatedRoute, private _router: Router)
   {
-  
+    //Get the param id from url
     if (this._avRoute.snapshot.paramMap.get("id")) {
       this.studentID = this._avRoute.snapshot.paramMap.get("id");
       console.log(this.studentID);
     }
+    //Initial form
     this.form = new FormGroup({
       studentID: new FormControl('', Validators.compose([
         Validators.required, Validators.pattern('^(s|S)\\d{7}$')])),
@@ -36,7 +35,7 @@ export class AddStudentComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    //Checking whether this component for add or edit
     if (this.studentID != null) {
       this.title = "Edit";
       this._studentService.getStudentById(this.studentID).subscribe(resp => this.form.setValue(resp),
@@ -52,13 +51,15 @@ export class AddStudentComponent implements OnInit {
     if (!this.form.valid) {
       return;
     }
-
+    // Add new student
     if (this.title === "Add") {
       this._studentService.saveStudent(this.form.value).subscribe((data) =>
       {
         this._router.navigate(["/fetch-student"]);
       }, error => this.errorMessage = error);
-    } else if (this.title === "Edit") {
+    }
+    //Edit student data
+      else if (this.title === "Edit") {
       this._studentService.updateStudent(this.studentID, this.form.value).subscribe((data) =>
       {
         this._router.navigate(["/fetch-student"]);

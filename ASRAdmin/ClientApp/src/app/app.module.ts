@@ -6,11 +6,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from "@angular/http";
 import { RouterModule } from '@angular/router';
 
+//Import the services
 import { StudentService } from './services/student.service';
 import { StaffService } from './services/staff.service';
 import { SlotService } from './services/slot.service';
 import { RoomService } from './services/room.service';
 
+//Import the components
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';

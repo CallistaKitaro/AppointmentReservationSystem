@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
     templateUrl: './slot-form.component.html',
     styleUrls: ['./slot-form.component.css']
 })
+
 /** slot-form component*/
 export class SlotFormComponent {
   form;
