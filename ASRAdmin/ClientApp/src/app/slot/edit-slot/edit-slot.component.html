@@ -29,8 +29,8 @@
     
   </div>
   <div class="form-group row">
-    <button *ngIf="page=='e'" type="submit" [disabled]="!form.valid">Update booking</button>
-    <button *ngIf="page=='s'" type="submit" [disabled]="!form.valid">Cancel booking</button>
+    <button *ngIf="page=='e'" type="submit" >Update booking</button>
+    <button *ngIf="page=='s'" type="submit" >Cancel booking</button>
     <button class="btn" (click)="return()">Return</button>
   </div>
 </form>

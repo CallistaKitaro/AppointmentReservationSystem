@@ -1,34 +1,27 @@
 <h1>{{title}}</h1>
 
-<p *ngIf="!staffSlots"><em>Please input staff ID</em></p>
+<p *ngIf="!staffSlots">Please input staff ID</p>
 
 <form [formGroup]="form"
       (ngSubmit)="getSlots()">
 
-  <ul>
-    <li>
-      <div>
-        <label for="staffID">Staff ID</label>
-        <input type="text" name="staffID" id="staffID" formControlName="staffID">
-        <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
-          Staff ID should with e and followed with 5 numbers
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <label for="view">View: </label>
-        <select name="view" id="view" formControlName="view">
-          <option *ngFor="let option of options" [value]="option">{{option}}</option>
-        </select>
-      </div>     
-    </li>
-    <li>
-      <div class="form-group row">
-        <button class="btn" type="submit" [disabled]="!form.valid">Find Slots</button>
-      </div>
-    </li>
-  </ul>
+  <div class="form-group row">
+    <label for="staffID">Staff ID</label>
+    <input type="text" name="staffID" id="staffID" formControlName="staffID">
+    <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
+      Staff ID should with e and followed with 5 numbers
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="view">View: </label>
+    <select name="view" id="view" formControlName="view">
+      <option *ngFor="let option of options" [value]="option">{{option}}</option>
+    </select>
+  </div>
+  <div class="form-group row">
+    <button class="btn" type="submit" [disabled]="!form.valid">Find Slots</button>
+  </div>
+
 </form>
 
 
