@@ -35,17 +35,45 @@ namespace ASR.Controllers
                 return NotFound();
             }
 
+            // Show staff's appointments with students today
+            ViewBag.Message = "";
             ViewBag.id = id;
             var staffId = id.Substring(0, 6);
-
-            //Get staff
             Staff staff = await GetStaff(staffId);
-            if (staff == null)
-            {
-                return NotFound();
-            }
+            ViewBag.StaffName = $"{staff.FirstName} {staff.LastName}";
 
-            return View(staff);
+            //Call All staff's slot from ASR web api
+            List<Slot> staffSlots = new List<Slot>();
+            using (var client = new HttpClient())
+            {
+                //Parsing service base url
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                //Sending request to web api
+                HttpResponseMessage req = await client.GetAsync($"Staff/{staffId}/GetSlots");
+
+                //Checking the response is successful or not
+                if (req.IsSuccessStatusCode)
+                {
+                    //Storing the response detail received from web api
+                    var slotResp = req.Content.ReadAsStringAsync().Result;
+
+                    //Deserialize the response received from web api and storing to slot list
+                    staffSlots = JsonConvert.DeserializeObject<List<Slot>>(slotResp);
+                }
+            }
+            
+            staffSlots = staffSlots
+                .Where(s => (s.StartTime.Date == DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour) && (s.StudentID != null)).ToList();
+            
+            if (staffSlots == null || !staffSlots.Any())
+            {
+                ViewBag.Message = "You have no appointments today";
+                return View();
+            }
+            
+            return View(staffSlots);
         }
 
         // Generate different view
@@ -119,8 +147,7 @@ namespace ASR.Controllers
 
             int pageSize = 2;
             return View(await PaginatedList<Slot>.CreateAsync(staffSlots, page ?? 1, pageSize));
-
-            //return View(staffSlots);
+            
         }
 
         // GET: Staffs
