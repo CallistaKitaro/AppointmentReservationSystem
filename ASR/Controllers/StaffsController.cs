@@ -354,8 +354,18 @@ namespace ASR.Controllers
             return View(slot);
         }
 
+        public async Task<IActionResult> SlotCreateView(string id, string bookingDate)
+        {
+            if (!String.IsNullOrEmpty(bookingDate))
+            {
+                return RedirectToAction("SlotCreate", new { id, bookingDate });
+            }
+            return View();
+        }
+
+
         // GET: Slots/Create
-        public async Task<IActionResult> SlotCreate(string id)
+        public async Task<IActionResult> SlotCreate(string id, string bookingDate)
         {
             ViewBag.Message = "";
             ViewBag.ErrMessage = "";
@@ -363,27 +373,51 @@ namespace ASR.Controllers
             var staffId = id.Substring(0, 6);
             Staff currentStaff = await GetStaff(staffId);
             ViewBag.StaffName = currentStaff.FirstName + " " + currentStaff.LastName;
+            DateTime selectDate = Convert.ToDateTime(bookingDate);
 
-            List<SelectListItem> roomSelect = new SelectList(await GetAllRooms(), "RoomID", "RoomName").ToList();
-            roomSelect.Insert(0, (new SelectListItem() { Text = "Select Room", Value = string.Empty }));
+            List<Slot> allSlots = await GetAllSlots();
+
+            //Create dropdown list for room
+            List<Room> allRooms = await GetAllRooms();
+            List<Room> roomToremove = new List<Room>();
+            foreach (var room in allRooms)
+            {
+                // If there are already 2 slots in this room on this date, remove from selection
+                var numslots = allSlots.Where(s => (s.RoomID == room.RoomID) && (s.StartTime.Date == selectDate.Date)).Count();
+                if(numslots == 2)
+                {
+                    roomToremove.Add(room);
+                }
+            }
+            allRooms = allRooms.Except(roomToremove).OrderBy(x => x.RoomName).ToList();
+
+            List<SelectListItem> roomSelect = new SelectList(allRooms, "RoomID", "RoomName").ToList();
             ViewData["RoomID"] = roomSelect;
 
-            //TODO: Limit the time slots allowed based on the room ?
+
+            // Limit the time slots allowed based on the staff prev bookings on the day
+            List<Slot> staffDaySlot = await GetAllSlots();
+            staffDaySlot = staffDaySlot.Where(s => (s.StaffID == staffId) && (s.StartTime.Date == selectDate.Date)).ToList();
+            
+
             List<SelectListItem> timeSelect = new List<SelectListItem>();
             TimeSpan time = Room.OpeningTime;
             TimeSpan oneHour = new TimeSpan(1, 0, 0);
 
+            //Create dropdown list for booking hours
             while (time < Room.ClosingTime)
             {
-                timeSelect.Add(new SelectListItem { Value = time.ToString(), Text = time.ToString("hh\\:mm") });
+                if (staffDaySlot.FirstOrDefault(sds => (sds.StartTime.TimeOfDay == time)) == null) //If staff hasn't made booking at this time, add in as a selection
+                {
+                    timeSelect.Add(new SelectListItem { Value = time.ToString(), Text = time.ToString("hh\\:mm") });
+                }
                 time = time.Add(oneHour);
             }
+
             ViewData["StartHour"] = timeSelect;
-
-            //TODO: Block time picker to only show future dates excluding Sat and Sun - not implemented
-
-            //ViewData["StaffID"] = new SelectList(await GetAllStaffs(), "StaffID", "StaffID");
+            
             ViewData["StaffID"] = id.Substring(0, 6);
+            ViewData["BookingDate"] = bookingDate;
 
             return View();
         }
@@ -421,7 +455,7 @@ namespace ASR.Controllers
                     // Check how many slots that room has been booked in that date
                     if(allSlots.Where(s => s.StartTime.Date == slot.StartTime.Date && s.RoomID == slot.RoomID).Count() >= ROOMSLOTMAX)
                     {
-                        ViewBag.ErrMessage = "Unable to create slot. Maximum room's slot is 2 per day, choose another day.";
+                        ViewBag.ErrMessage = "Unable to create slot. Maximum room's slot is 2 per day, choose another day or room.";
                         //return RedirectToAction(nameof(SlotCreate), new { id = $"{slot.StaffID}@rmit.edu.au" });
                         return View();
                     }
@@ -432,6 +466,13 @@ namespace ASR.Controllers
                         {
                             ViewBag.ErrMessage ="Unable to create slot. Duplicate schedule, choose different time." ;
                             //return RedirectToAction(nameof(SlotCreate), new { id = $"{slot.StaffID}@rmit.edu.au" });
+                            return View();
+                        }
+                        //Check if staff is already have the same slot time and date, but on the other room
+                        var otherBooking = allSlots.Where(s => s.StartTime == slot.StartTime && s.StaffID == currentStaff.StaffID).FirstOrDefault();
+                        if (otherBooking != null)
+                        {
+                            ViewBag.ErrMessage = $"You have already made a booking at this date and time in Room {otherBooking.Room.RoomName}";
                             return View();
                         }
                         else
@@ -508,44 +549,32 @@ namespace ASR.Controllers
         }
 
         // POST: Slots delete
-        [HttpPost, ActionName("SlotDelete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SlotDelete([Bind("RoomID,StartTime,StaffID,StudentID")] Slot slot)
         {
             var staffId = slot.StaffID;
             ViewBag.id = staffId + "@rmit.edu.au";      
             var roomid = slot.RoomID;
-            Staff currentStaff = await GetStaff(slot.Staff.Email);
-            ViewBag.StaffName = currentStaff.FirstName + " " + currentStaff.LastName;
             var startTime = slot.StartTime.ToString("dd/MM/yyyy HH:mm");
 
-            //Check whether slot already booked or not
-            var allSlots = await GetAllSlots();
-            if(allSlots.Where(s => s.RoomID == slot.RoomID && s.StartTime == slot.StartTime && s.StudentID != null).Any())
+            using (var client = new HttpClient())
             {
-                ViewBag.Message = "The slot is booked. Can't be removed.";
-                return View();
-            }
-            else
-            {
-                using (var client = new HttpClient())
+                //Parsing service base url
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Clear();
+
+                HttpResponseMessage reqSlot = await client.DeleteAsync($"Slot?roomid={roomid}&startTime={startTime}");
+
+                if (reqSlot.IsSuccessStatusCode)
                 {
-                    //Parsing service base url
-                    client.BaseAddress = new Uri(baseUrl);
-                    client.DefaultRequestHeaders.Clear();
-
-                    HttpResponseMessage reqSlot = await client.DeleteAsync($"Slot?roomid={roomid}&startTime={startTime}");
-
-                    if (reqSlot.IsSuccessStatusCode)
-                    {
-                        ViewBag.Message = "Slot has been deleted";
-                        return View();
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Server Error.";
-                        return View();
-                    }
+                    ViewBag.Message = "Slot has been deleted";
+                    return View();
+                }
+                else
+                {
+                    ViewBag.Message = "Server Error.";
+                    return View();
                 }
             }
         }

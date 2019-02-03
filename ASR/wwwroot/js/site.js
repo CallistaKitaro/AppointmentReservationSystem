@@ -3,10 +3,10 @@
 
 // Write your JavaScript code.
 var d = new Date();
-var strDate = d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+var strDate = (d.getDate()+1) + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
 
-$('.form-control-sm.SearchDate').datepicker({
+$('.date.SearchDate').datepicker({
     format: "dd/mm/yyyy",
     startDate: strDate,
-    daysOfWeekDisabled: "0,6"
+    daysOfWeekDisabled: "0,6",
 });

@@ -21,7 +21,7 @@
             <a asp-controller="Staffs" asp-action="Index" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item">Home</a>
             <a asp-controller="Staffs" asp-action="ListSchedules" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">List Schedules</a>
             <a asp-controller="Staffs" asp-action="RoomAvailability" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Room Availability</a>
-            <a asp-controller="Staffs" asp-action="SlotCreate" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Create a Slot</a>
+            <a asp-controller="Staffs" asp-action="SlotCreateView" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Create a Slot</a>
             <a asp-controller="Staffs" asp-action="ListSlots" asp-route-id="@UserManager.GetUserName(User)" class="btn btn-outline-primary list-group-item ">Remove a Slot</a>
         }
         @if (User.Identity.IsAuthenticated && User.IsInRole("student"))

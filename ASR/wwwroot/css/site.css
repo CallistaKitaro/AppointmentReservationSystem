@@ -86,6 +86,9 @@ body {
     margin-left: -40px;
     margin-bottom: unset;
 }
+.row{
+    margin-right: 0;
+}
 
 
 /* Tables */

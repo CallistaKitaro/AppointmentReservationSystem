@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "Create Slot";
+    Layout = "_Layout";
+}
+
+@section navigation{
+    <partial name="_SidebarNav" />
+}
+
+
+    <div class="body-content content-area">
+        <h2>Create a Slot</h2>
+        <hr />
+
+        @using (Html.BeginForm())
+        {
+            <div>
+                <p>Enter a date to create slot:</p>
+                <input class="SearchDate form-control-sm input-group-sm date" data-provide="datepicker" name="bookingDate" type="text" value="" required>
+                <input class="btn btn-sm btn-success" type="submit" value="Submit" />
+            </div>
+        }
+
+    </div>

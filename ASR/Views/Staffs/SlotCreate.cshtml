@@ -6,34 +6,31 @@
 }
 
 @section navigation{
-    @await Html.PartialAsync("_StaffPartialView")
+    <partial name="_SidebarNav" />
 }
 
-<h2>Create a Slot</h2>
+    <div class="body-content content-area">
+        <h2>Create a Slot</h2>
+        <hr />
 
-<h4>Student Name : @ViewBag.StaffName </h4>
-<hr />
 
-@if (ViewBag.ErrMessage != "")
-{
-    <h2>@ViewBag.ErrMessage</h2>
-
-    <div>
-        <a asp-action="SlotCreate" asp-route-id="@ViewBag.id">Create New Slot</a>
-    </div>
-
-}else if (ViewBag.Message != "")
-{
-    <h2>@ViewBag.Message</h2>
-
-    <div>
-        <a asp-action="ListSlots" asp-route-id="@ViewBag.id">Show List Slot</a>
-    </div>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
+        @if (ViewBag.ErrMessage != "")
+        {
+            <div class="alert alert-dismissible alert-danger">
+                <p>@ViewBag.ErrMessage</p>
+                <a class="btn btn-success" asp-action="SlotCreateView" asp-route-id="@ViewBag.id">Create New Slot</a>
+            </div>
+        }
+        else if (ViewBag.Message != "")
+        {
+            <div class="alert alert-dismissible alert-warning">
+                <p>@ViewBag.Message</p>
+                <a class="btn btn-success" asp-action="SlotCreateView" asp-route-id="@ViewBag.id">Create New Slot</a>
+                <a class="btn btn-success" asp-action="ListSchedules" asp-route-id="@ViewBag.id">Show slots</a>
+            </div>
+        }
+        else
+        {
             <form asp-action="SlotCreate">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
@@ -42,7 +39,7 @@ else
                 </div>
                 <div class="form-group">
                     <label asp-for="StartTime" class="control-label"></label>
-                    <input asp-for="StartTime" class="form-control" />
+                    <input type="text" asp-for="StartTime" class="form-control" value="@ViewBag.BookingDate" readonly />
                     <span asp-validation-for="StartTime" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -50,16 +47,13 @@ else
                     <select for="StartHour" name="StartHour" class="form-control" asp-items="ViewBag.StartHour"></select>
                 </div>
                 <div class="form-group">
-                    <label asp-for="StaffID" class="control-label"></label>
-                    <input type="text" asp-for="StaffID" class="form-control" value="@ViewBag.StaffID" />
+                    <label asp-for="StaffID" class="control-label">Staff ID</label>
+                    <input type="text" asp-for="StaffID" class="form-control" value="@ViewBag.StaffID" readonly />
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Slot Create" class="btn btn-default" />
+                    <input type="submit" value="Create" class="btn btn-success" />
                 </div>
             </form>
-        </div>
+        }
     </div>
-}
-
-
 
