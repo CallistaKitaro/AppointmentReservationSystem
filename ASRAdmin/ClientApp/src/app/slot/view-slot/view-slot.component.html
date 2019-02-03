@@ -13,16 +13,13 @@
   <tbody>
     <tr *ngFor="let slot of slotList">
       <td>{{ slot.roomID }}</td>
-      <td>{{ slot.startTime }}</td>
+      <td>{{ slot.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
       <td>{{ slot.staffID }} </td>
       <td>{{ slot.studentID }}</td>
       <td></td>
       <td>
-        <!--
-          <a [routerLink]="['/add-staff',staffSlots[0].staffID]">Edit | </a>
-           <a [routerLink]="" (click)="deleteStaff(staffSlots[0].staffID)">Delete</a>
-         -->
-
+          <a [routerLink]="['/add-staff/',slot.staffID]">Edit | </a> 
+          <a [routerLink]="" (click)="deleteSlot(slot.roomID, slot.startTime)">Delete</a>
       </td>
     </tr>
     <tr *ngIf="!slotList" && slotList.length=0>

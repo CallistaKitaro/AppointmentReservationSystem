@@ -42,6 +42,16 @@ namespace ASR_Api.Controllers
             return staffSlots;
         }
 
+        // Get ; ASRapi/Slot/staffId
+        [HttpGet]
+        [Route("ByStaffIdBooked")]
+        public async Task<ActionResult<IEnumerable<Slot>>> GetSlotByStaffIdBooked(string id)
+        {
+            var staffSlots = await _context.Slot.Where(s => s.StaffID == id && s.StudentID !=null).ToArrayAsync();
+
+            return staffSlots;
+        }
+
         // Get ; ASRapi/Slot/studentId
         [HttpGet]
         [Route("ByStudentId")]

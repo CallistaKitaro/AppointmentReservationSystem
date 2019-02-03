@@ -1,9 +1,6 @@
-import { Component } from '@angular/core';
-import { SlotService } from '../../services/slot.service';
+import { Component, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Slot } from '../../Models/slot';
-import { Router } from "@angular/router";
-import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'slot-form',
@@ -14,12 +11,15 @@ import { Title } from '@angular/platform-browser';
 export class SlotFormComponent {
   form;
   id: string;
+  options = ["All", "Booked"];
+  option: string;
 
   constructor(private _router: Router)
   {
     this.form = new FormGroup({
       staffID: new FormControl('', Validators.compose([
         Validators.required, Validators.pattern('^(e|E)\\d{5}$')])),
+      view: new FormControl('', Validators.required)
     });
   }
 
@@ -28,9 +28,16 @@ export class SlotFormComponent {
     if (!this.form.valid) {
       return;
     }
-    
+
+    //Check the option view for slots
+    if (this.form.get('view').value == null) {
+      this.option = "All";
+    } else {
+      this.option = this.form.get('view').value;
+    }
+
     this.id = this.form.get('staffID').value;
-    this._router.navigate(["/view-slot/", this.id]);
+    this._router.navigate(["/view-slot/", this.id+this.option]);
     
   }
 

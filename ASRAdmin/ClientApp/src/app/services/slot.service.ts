@@ -30,6 +30,11 @@ export class SlotService {
       .map((response: Response) => response.json()).catch(this.errorHandler)
   }
 
+  getBookedStaffSlots(id: string): Observable<Slot[]> {
+    return this._http.get(this.baseUrl + `Slot/ByStaffIdBooked?id=${id}`)
+      .map((response: Response) => response.json()).catch(this.errorHandler)
+  }
+
   getStudentSlots(id: string): Observable<Slot[]>
   {
     return this._http.get(this.baseUrl + `Slot/ByStudentId?id=${id}`)

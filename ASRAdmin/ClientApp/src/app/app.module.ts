@@ -22,6 +22,7 @@ import { AddStaffComponent } from './staff/add-staff/add-staff.component';
 import { SlotFormComponent } from './slot/slot-form/slot-form.component';
 import { ViewSlotComponent } from './slot/view-slot/view-slot.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

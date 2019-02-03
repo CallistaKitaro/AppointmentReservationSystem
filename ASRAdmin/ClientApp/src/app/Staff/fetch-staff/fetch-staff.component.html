@@ -21,7 +21,7 @@
       <td>{{ staff.email }}</td>
       <td></td>
       <td>
-        <a [routerLink]="['/add-staff',staff.staffID]">Edit | </a>
+        <a [routerLink]="['/add-staff/',staff.staffID]">Edit | </a>
         <a [routerLink]="" (click)="deleteStaff(staff.staffID)">Delete</a>
       </td>
     </tr>
