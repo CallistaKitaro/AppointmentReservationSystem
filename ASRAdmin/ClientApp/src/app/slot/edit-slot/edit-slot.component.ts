@@ -67,7 +67,8 @@ export class EditSlotComponent {
       updatedSlot.roomID = this.form.get('roomID').value;
       updatedSlot.startTime = this.form.get('startTime').value;
       updatedSlot.staffID = this.form.get('staffID').value;
-      if (this.form.get('studentID').value == null) {
+      updatedSlot.studentID = this.form.get('studentID').value;
+      if (this.form.get('studentID').value == "") {
         updatedSlot.studentID = null;
       } else {
         updatedSlot.studentID = this.form.get('studentID').value;
@@ -90,6 +91,7 @@ export class EditSlotComponent {
       updatedSlot.roomID = this.form.get('roomID').value;
       updatedSlot.startTime = this.form.get('startTime').value;
       updatedSlot.staffID = this.form.get('staffID').value;
+      updatedSlot.studentID = null;
 
       this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", studentId]);
