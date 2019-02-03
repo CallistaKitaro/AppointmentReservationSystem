@@ -1,24 +1,23 @@
 <h1>List Room</h1>
 
-<p>Show all rooms here .</p>
-
 <p *ngIf="!roomList"><em>Loading data. Please wait ...</em></p>
 
-<table class='table' *ngIf="roomList">
-  <thead>
-    <tr> 
+<table class='table table-primary table-bordered table-hover' *ngIf="roomList">
+  <thead >
+    <tr class="bg-warning"> 
       <th>Room Name</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let room of roomList">     
+    <tr *ngFor="let room of roomList" >     
       <td>{{ room.roomName }}</td>  
       <td>
-        <a [routerLink]="['/add-room/',room.roomID]">Edit | </a>
-        <a [routerLink]="" (click)="deleteRoom(room.roomID)">Delete</a>
+        <a class="btn-sm btn-success" [routerLink]="['/add-room/',room.roomID]">Edit</a>
+        <a class="btn-sm btn-danger" [routerLink]="" (click)="deleteRoom(room.roomID)">Delete</a>
       </td>
     </tr>
-    <tr *ngIf="!roomList" && staffList.length=0>
+    <tr *ngIf="!roomList || roomList.length == 0" >
       <td colspan="5">
         No Rooms to display
       </td>

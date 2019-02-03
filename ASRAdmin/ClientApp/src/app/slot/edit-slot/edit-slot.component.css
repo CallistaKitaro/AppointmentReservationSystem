@@ -12,12 +12,12 @@ ul {
   }
 
 header, label {
-  color: #53ace4;
+  color: #E95420;
 }
 
 input, select {
-  background-color: #29394b;
-  color: #c6c5c3;
+  background-color: white;
+  color: orange;
   border-radius: 3px;
   border: none;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset, 0 -1px 0 rgba(0,0,0,0.05) inset;

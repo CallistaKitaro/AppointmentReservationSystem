@@ -30,6 +30,7 @@ export class FetchStudentComponent implements OnInit {
     const ans = confirm("Do you want to delete student with ID " + stdID);
     if (ans)
     {
+      //Call student service to execute delete student
       this._studentService.deleteStudent(stdID).subscribe((data) => {
         this.getStudents();
       }, error => console.error(error));

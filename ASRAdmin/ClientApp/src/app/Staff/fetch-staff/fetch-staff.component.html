@@ -1,16 +1,15 @@
 <h1>List Staff</h1>
 
-<p>Show all staff here .</p>
-
  <p *ngIf="!staffList"><em>Loading data. Please wait ...</em></p>
 
-<table class='table' *ngIf="staffList">
+<table class='table table-primary table-bordered table-hover'  *ngIf="staffList">
   <thead>
-    <tr>
+    <tr class="bg-warning">
       <th>StaffID</th>
       <th>First Name</th>
       <th>Last Name</th>
       <th>Email</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -19,10 +18,9 @@
       <td>{{ staff.firstName }}</td>
       <td>{{ staff.lastName }}</td>
       <td>{{ staff.email }}</td>
-      <td></td>
       <td>
-        <a [routerLink]="['/add-staff/',staff.staffID]">Edit | </a>
-        <a [routerLink]="" (click)="deleteStaff(staff.staffID)">Delete</a>
+        <a class="btn-sm btn-success" [routerLink]="['/add-staff/',staff.staffID]">Edit</a>
+        <a class="btn-sm btn-danger" [routerLink]="" (click)="deleteStaff(staff.staffID)">Delete</a>
       </td>
     </tr>
     <tr *ngIf="!staffList || staffList.length == 0" >

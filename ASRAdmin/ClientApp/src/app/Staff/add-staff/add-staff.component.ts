@@ -17,11 +17,12 @@ export class AddStaffComponent implements OnInit {
 
   constructor(private _staffService: StaffService, private _avRoute: ActivatedRoute, private _router: Router)
   {
-  
+    //Get the params id that pas to url
     if (this._avRoute.snapshot.paramMap.get("id"))
     {
       this.staffID = this._avRoute.snapshot.paramMap.get("id");
     }
+    //Initial form
     this.form = new FormGroup({
       staffID: new FormControl('', Validators.compose([
         Validators.required, Validators.pattern('^(e|E)\\d{5}$')])),
@@ -34,7 +35,7 @@ export class AddStaffComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    //Checking whether this page to add or edit staff
     if (this.staffID != null) {
       this.title = "Edit";
       this._staffService.getStaffById(this.staffID).subscribe(resp => this.form.setValue(resp),
@@ -49,13 +50,15 @@ export class AddStaffComponent implements OnInit {
     if (!this.form.valid) {
       return;
     }
-
+    // Save new staff
     if (this.title === "Add") {
       this._staffService.saveStaff(this.form.value).subscribe((data) =>
       {
         this._router.navigate(["/fetch-staff"]);
       }, error => this.errorMessage = error);
-    } else if (this.title === "Edit") {
+    }
+    // Or edit old staff details
+    else if (this.title === "Edit") {
       this._staffService.updateStaff(this.staffID, this.form.value).subscribe((data) =>
       {
         this._router.navigate(["/fetch-staff"]);

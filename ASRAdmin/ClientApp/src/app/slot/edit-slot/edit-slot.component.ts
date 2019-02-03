@@ -10,7 +10,7 @@ import { Slot } from '../../Models/slot';
     styleUrls: ['./edit-slot.component.css']
 })
 /** edit-slot component*/
-export class EditSlotComponent {
+export class EditSlotComponent implements OnInit {
   form;
   title: string = "";
   errorMessage: any;
@@ -25,8 +25,6 @@ export class EditSlotComponent {
     if (this._avRoute.snapshot.paramMap.get("id")) {
       this.id = this._avRoute.snapshot.paramMap.get("id");
     }
-
-    // Set the form
     this.form = new FormGroup({
       roomID: new FormControl(''),
       room: new FormControl(''),
@@ -58,47 +56,42 @@ export class EditSlotComponent {
   }
 
   update() {
-    
     // save the new data and return to each staff page
     if (this.page == "e") {
       var staffId = this.form.get('staffID').value + 'All';
 
+      //Set up new data to send
       let updatedSlot: Slot = new Slot();
       updatedSlot.roomID = this.form.get('roomID').value;
       updatedSlot.startTime = this.form.get('startTime').value;
       updatedSlot.staffID = this.form.get('staffID').value;
-      updatedSlot.studentID = this.form.get('studentID').value;
       if (this.form.get('studentID').value == "") {
         updatedSlot.studentID = null;
       } else {
         updatedSlot.studentID = this.form.get('studentID').value;
       }
-
-      console.log(this.roomId);
-      console.log(this.slotTime);
-      console.log(updatedSlot);
-
+      // Save new data
       this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", staffId]);
       }, error => this.errorMessage = error);
     }
-
-     // save the new data and return to each student page
+     // edit for student booking / cancel the booking
     else if (this.page == "s") {
       var studentId = this.form.get('studentID').value;
 
+      //Set up the new student's data
       let updatedSlot: Slot = new Slot();
       updatedSlot.roomID = this.form.get('roomID').value;
       updatedSlot.startTime = this.form.get('startTime').value;
       updatedSlot.staffID = this.form.get('staffID').value;
       updatedSlot.studentID = null;
-
+      
+      //Save the new data 
       this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", studentId]);
       }, error => this.errorMessage = error)
     }
   }
-
 
   return() {
 

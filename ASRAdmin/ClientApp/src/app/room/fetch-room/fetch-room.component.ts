@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
     styleUrls: ['./fetch-room.component.css']
 })
 /** fetch-room component*/
-export class FetchRoomComponent {
+export class FetchRoomComponent implements OnInit {
   roomList: Room[];
 
   constructor(private _roomService: RoomService, private _router: Router) {

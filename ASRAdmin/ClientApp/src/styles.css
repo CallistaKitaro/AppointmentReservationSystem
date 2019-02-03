@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+
+.main-content {
+  width: 100%;
+  height: calc(100vh - 65px);
+}
+
+/* Tables */
+.table {
+  width: 60vw;
+}
+
+.table-bordered {
+  border: 2px solid #e9ecef;
+}
+
+.table-detail,
+.table-detail th,
+.table-detail td {
+  border: 1.5px solid #AEA79F;
+}

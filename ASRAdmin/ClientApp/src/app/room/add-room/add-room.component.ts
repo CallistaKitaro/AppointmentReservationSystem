@@ -32,7 +32,6 @@ export class AddRoomComponent {
   }
 
   ngOnInit() {
-
     if (this.roomID != null) {
       this.title = "Edit";
       this._roomService.getRoomById(this.roomID).subscribe(resp => this.form.setValue(resp),
@@ -47,22 +46,30 @@ export class AddRoomComponent {
       return;
     }
 
-    //Check if this Add room or Edit page
-    if (this.title === "Add") {
+    //Check whether view add or edit room
+    if (this.title == "Add") {
 
       this._roomService.getRooms().subscribe(roomData => this.totalRoom = roomData);
       var sum = this.totalRoom.length;
 
+      // increment roomId number
       let newRoom = new Room();
       newRoom.roomID = String(sum + 1);
       newRoom.roomName = (this.form.get('roomName').value).toUpperCase();
 
+      //Update the new data
       this._roomService.saveRoom(newRoom).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);
       }, error => this.errorMessage = error);
-      
-    } else if (this.title === "Edit") {
-      this._roomService.updateRoom(this.roomID, this.form.value).subscribe((data) => {
+
+    } else if (this.title == "Edit") {
+      //get new value
+      let newRoom = new Room();
+      newRoom.roomID = this.form.get('roomID').value;
+      newRoom.roomName = (this.form.get('roomName').value).toUpperCase();
+
+      //Update the new data
+      this._roomService.updateRoom(this.roomID, newRoom).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);
       }, error => this.errorMessage = error);
     }
