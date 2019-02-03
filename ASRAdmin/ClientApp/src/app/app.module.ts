@@ -9,12 +9,13 @@ import { RouterModule } from '@angular/router';
 import { StudentService } from './services/student.service';
 import { StaffService } from './services/staff.service';
 import { SlotService } from './services/slot.service';
+import { RoomService } from './services/room.service';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { FetchRoomComponent } from './room/fetch-room/fetch-room.component';
+import { AddRoomComponent } from './room/add-room/add-room.component';
 import { FetchStudentComponent } from './student/fetch-student/fetch-student.component';
 import { AddStudentComponent } from './student/add-student/add-student.component';
 import { FetchStaffComponent } from './staff/fetch-staff/fetch-staff.component';
@@ -29,8 +30,8 @@ import { SlotFormStudentComponent } from './slot/slot-form-student/slot-form-stu
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
+    FetchRoomComponent,
+    AddRoomComponent,
     FetchStudentComponent,
     AddStudentComponent,
     FetchStaffComponent,
@@ -48,8 +49,9 @@ import { SlotFormStudentComponent } from './slot/slot-form-student/slot-form-stu
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'fetch-room', component: FetchRoomComponent },
+      { path: 'add-room', component: AddRoomComponent },
+      { path: 'add-room/:id', component: AddRoomComponent },
       { path: 'fetch-student', component: FetchStudentComponent },
       { path: 'add-student', component: AddStudentComponent },
       { path: 'add-student/:id', component: AddStudentComponent },
@@ -62,7 +64,7 @@ import { SlotFormStudentComponent } from './slot/slot-form-student/slot-form-stu
       { path: 'edit-slot/:id', component: EditSlotComponent },
     ])
   ],
-  providers: [StudentService, StaffService, SlotService],
+  providers: [StudentService, StaffService, SlotService, RoomService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
