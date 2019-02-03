@@ -6,80 +6,95 @@
 }
 
 @section navigation{
-    @await Html.PartialAsync("_StudentPartialView")
+    <partial name="_SidebarNav" />
 }
 
-<h4>Student Name : @ViewBag.StudentName </h4>
-<h4>Student Email : @ViewBag.id </h4>
+    <div class="body-content content-area">
 
-<hr />
+        @if (ViewBag.Message != "")
+        {
+            <div class="alert alert-dismissible alert-warning">
+                <p>@ViewBag.Message</p>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        }
+        else
+        {
+            <h2>Slot Details</h2>
+            <hr />
 
-@if (ViewBag.Message != "")
-{
-    <h2>@ViewBag.Message</h2>
-}
-else
-{
-    <h2>Slot Details</h2>
+            <table class="table table-detail">
+                <tr>
+                    <th class="table-active">
+                        @Html.DisplayNameFor(model => model.Room.RoomName)
+                    </th>
+                    <td class="table-light">
+                        @Html.DisplayFor(model => model.Room.RoomName)
+                    </td>
+                </tr>
 
-    <div>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Room.RoomName)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Room.RoomName)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.StartTime)
-            </dd>
-            <dt>
-                Time
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.StartTime.TimeOfDay)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Staff.StaffID)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Staff.StaffID)
-            </dd>
-            <dt>Staff Name</dt>
-            <dd>
-                @Html.DisplayFor(model => model.Staff.FirstName) @Html.DisplayFor(model => model.Staff.LastName)
-            </dd>
-            @if (Model.StudentID == null)
-            {
-                <dt>
-                    @Html.DisplayNameFor(model => model.Student.StudentID)
-                </dt>
-                <dd>-</dd>
-            }
-            else
-            {
-                <dt>
-                    @Html.DisplayNameFor(model => model.Student.StudentID)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Student.StudentID)
-                </dd>
-                <dt>Student Name</dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Student.FirstName) @Html.DisplayFor(model => model.Student.LastName)
-                </dd>
-            }
+                <tr>
+                    <th class="table-active">
+                        @Html.DisplayNameFor(model => model.StartTime)
+                    </th>
+                    <td class="table-light">
+                        @Html.DisplayFor(model => model.StartTime)
+                    </td>
+                </tr>
 
-        </dl>
+                <tr>
+                    <th class="table-active">
+                        Time
+                    </th>
+                    <td class="table-light">
+                        @Html.DisplayFor(model => model.StartTime.TimeOfDay)
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="table-active">
+                        @Html.DisplayNameFor(model => model.Staff.StaffID)
+                    </th>
+                    <td class="table-light">
+                        @Html.DisplayFor(model => model.Staff.StaffID)
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="table-active">
+                        Staff Name
+                    </th>
+                    <td class="table-light">
+                        @Html.DisplayFor(model => model.Staff.FirstName) @Html.DisplayFor(model => model.Staff.LastName)
+                    </td>
+                </tr>
+
+                <tr>
+                    @if (Model.StudentID == null)
+                    {
+                        <th class="table-active">
+                            @Html.DisplayNameFor(model => model.Student.StudentID)
+                        </th>
+                        <td class="table-light">
+                            -
+                        </td>
+                    }
+                    else
+                    {
+                        <th class="table-active">
+                            @Html.DisplayNameFor(model => model.Student.StudentID)
+                        </th>
+                        <td class="table-light">
+                            @Html.DisplayFor(model => model.Student.StudentID)
+                        </td>
+                        <th class="table-active">Student Name</th>
+                        <td class="table-light">
+                            @Html.DisplayFor(model => model.Student.FirstName) @Html.DisplayFor(model => model.Student.LastName)
+                        </td>
+                    }
+            </table>
+            <div>
+                @Html.ActionLink("Book slot", "MakeBooking", new { id = ViewBag.id, roomid = Model.RoomID, startTime = Model.StartTime.ToString("dd/MM/yyyy HH:mm")}, new { @class = "btn btn-success" })
+            </div>
+        }
     </div>
-    <div>
-        @Html.ActionLink("Book slot", "MakeBooking", new { id=ViewBag.id, roomid = Model.RoomID, startTime = Model.StartTime.ToString("dd/MM/yyyy HH:mm") })
-
-    </div>
-}
-
-

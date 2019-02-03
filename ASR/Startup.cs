@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ASR.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ASR
 {
@@ -40,7 +41,10 @@ namespace ASR
             //        Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ASRContext>();
-            
+
+
+            services.AddDbContext<ASRContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("ASRContext")));
 
             //Simplify registration password
             services.AddIdentity<AccountUser, IdentityRole>(options =>
@@ -51,15 +55,18 @@ namespace ASR
             }).AddDefaultUI().AddEntityFrameworkStores<ASRContext>().AddDefaultTokenProviders();
 
 
-            services.AddAuthentication().AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-            });
-
+            services.AddAuthentication()
+                .AddGoogle(googleOptions => 
+                {
+                    googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                })
+                .AddFacebook(facebookOptions => 
+                {
+                    facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                    facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                });
             
-            services.AddDbContext<ASRContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("ASRContext")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

@@ -1,16 +1,114 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    background-color: #FCF0EB;
+}
+
+/* Centering website title*/
+#banner {
+    text-align: center;
+    height: 65px;
+}
+
+.banner-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-brand.title {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 1.7em;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Adding landing page's background */
+.main-content {
+    width: 100%;
+    height: calc(100vh - 65px);
+}
+
+.main-content > img {
+    width: inherit;
+    height: inherit;
+    opacity: 0.8;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 20px;
 }
+
+
+/* Home Index*/
+.content-area {
+    position: absolute;
+    top: 120px;
+    left: 250px;
+}
+
+/* Home FAQ*/
+.container{
+    padding-bottom: 20px;
+}
+
+.faq-container{
+    width: 700px;
+}
+
+/* Sidebar nav*/
+.sidebar {
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    max-width: 30rem;
+}
+
+.form-style {
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Login and registration page */
+.login-wrapper {
+    padding-top:20px;
+    padding-left:50px;
+}
+
+.validation-summary-errors ul {
+    list-style: none;
+    margin-left: -40px;
+    margin-bottom: unset;
+}
+.row{
+    margin-right: 0;
+}
+
+
+/* Tables */
+.table{
+    width: 60vw;
+}
+
+.table-bordered {
+    border: 2px solid #e9ecef;
+}
+
+.table-detail,
+.table-detail th,
+.table-detail td {
+    border: 1.5px solid #AEA79F;
+}
+
+
+
+
 
 /* Carousel */
 .carousel-caption p {

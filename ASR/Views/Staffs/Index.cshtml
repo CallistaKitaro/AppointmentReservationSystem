@@ -1,4 +1,4 @@
-﻿@model ASR.Models.Staff
+﻿@model IEnumerable<ASR.Models.Slot>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,14 +6,57 @@
 }
 
 @section navigation{
-    @await Html.PartialAsync("_StaffPartialView")
+    <partial name="_SidebarNav" />
 }
 
-<h1>Staff Homepage </h1>
+<div class="body-content content-area">
+    <h1>@ViewBag.StaffName Appointments Today</h1>
+    <hr />
 
-<h2 class="form-control-static">Welcome @Model.FirstName @Model.LastName </h2>
-<h3>Email : @Model.Email</h3>
-<br/>
+    @if (ViewBag.Message != "")
+    {
+        <h2 class="text-danger">@ViewBag.Message</h2>
+    }
+    else
+    {
+        <div>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>
+                            Room Name
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>Time</th>
+                        <th>
+                            Student
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Room.RoomName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
+                            </td>
+                            <td>
+                                <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                                <p>@Html.DisplayFor(modelItem => item.Student.FirstName) @Html.DisplayFor(modelItem => item.Student.LastName)</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 
-
-
+</div>

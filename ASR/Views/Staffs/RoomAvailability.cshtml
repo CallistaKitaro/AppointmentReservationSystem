@@ -1,25 +1,64 @@
-﻿@{
+﻿@model IEnumerable<ASR.Models.RoomViewModel>
+
+@{
     ViewData["Title"] = "Room Availability";
     Layout = "_Layout";
 }
 
-@section navigation
-{
-    @await Html.PartialAsync("_StaffPartialView")
+@section navigation{
+    <partial name="_SidebarNav" />
 }
-    
-<h1>Room Availability</h1>
 
-<form asp-controller="Staffs" asp-action="ShowRoomAvailability" method="get">
-    <p>
-        <label>Input search date: </label>
-        <input type="date" name="SearchDate" value="2019-01-01" />
-        <input type="Submit" value="filter" />
-    </p>
-</form>
-<h3>
-    Availability rooms on @DateTime.Today.ToLongDateString() 
-</h3>
+<div class="body-content content-area">
+    <h1>Room Availability</h1>
 
-    
+    <hr />
 
+    @using (Html.BeginForm())
+    {
+        <p>
+            Filter by date:
+            <input class="SearchDate form-control-sm input-group-sm date" data-provide="datepicker" name="SearchDate" type="text" value="">
+            <input class="btn btn-sm btn-success display-date-submit" type="submit" value="Search" />
+        </p>
+    }
+
+    @if (ViewBag.Message != "")
+    {
+        <h2 class="text-danger">@ViewBag.Message</h2>
+    }
+    else
+    {
+        <div>
+            <h3 class="display-date">
+                Room availability on @ViewBag.dateToDisplay
+            </h3>
+
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>
+                            @Html.DisplayNameFor(model => model.RoomName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Availability)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Availability)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
