@@ -9,6 +9,6 @@ namespace ASR.Models
     {
         public string RoomName { get; set; }
         public int Availability { get; set; }
-      
+       
     }
 }

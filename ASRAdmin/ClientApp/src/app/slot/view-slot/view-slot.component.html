@@ -1,0 +1,32 @@
+<h1>{{title}}</h1>
+
+<table class='table' *ngIf="slotList">
+  <thead>
+    <tr>
+      <th>Room ID</th>
+      <th>Start Time</th>
+      <th>Staff ID </th>
+      <th>Student ID</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let slot of slotList">
+      <td>{{ slot.roomID }}</td>
+      <td>{{ slot.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ slot.staffID }} </td>
+      <td>{{ slot.studentID }}</td>
+      <td></td>
+      <td>
+          <a [routerLink]="['/add-staff/',slot.staffID]">Edit | </a> 
+          <a [routerLink]="" (click)="deleteSlot(slot.roomID, slot.startTime)">Delete</a>
+      </td>
+    </tr>
+    <tr *ngIf="!slotList" && slotList.length=0>
+      <td colspan="5">
+        No slot available.
+    </tr>
+
+  </tbody>
+</table>
+
