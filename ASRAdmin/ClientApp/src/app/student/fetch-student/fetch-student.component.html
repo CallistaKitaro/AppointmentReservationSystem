@@ -4,13 +4,14 @@
 
  <p *ngIf="!stdList"><em>Loading data. Please wait ...</em></p>
 
-<table class='table' *ngIf="stdList">
+<table class='table table-primary table-bordered table-hover' *ngIf="stdList">
   <thead>
-    <tr>
+    <tr class="bg-warning">
       <th>StudentID</th>
       <th>First Name</th>
       <th>Last Name</th>
       <th>Email</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -19,10 +20,9 @@
       <td>{{ std.firstName }}</td>
       <td>{{ std.lastName }}</td>
       <td>{{ std.email }}</td>
-      <td></td>
       <td>
-        <a [routerLink]="['/add-student',std.studentID]">Edit | </a>
-        <a [routerLink]="" (click)="deleteStudent(std.studentID)">Delete</a>
+        <a class="btn-sm btn-success" [routerLink]="['/add-student',std.studentID]">Edit</a>
+        <a class="btn-sm btn-danger" [routerLink]="" (click)="deleteStudent(std.studentID)">Delete</a>
       </td>
     </tr>
     <tr *ngIf="!stdList" && stdList.length = 0>

@@ -1,13 +1,13 @@
 <h1>{{title}}</h1>
 
-<table class='table' *ngIf="slotList">
+<table class='table table-primary table-bordered table-hover' *ngIf="slotList">
   <thead>
-    <tr>
+    <tr class="bg-warning">
       <th>Room ID</th>
       <th>Start Time</th>
       <th>Staff ID </th>
       <th>Student ID</th>
-
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -16,11 +16,10 @@
       <td>{{ slot.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
       <td>{{ slot.staffID }} </td>
       <td>{{ slot.studentID }}</td>
-      <td></td>
       <td>
-        <a *ngIf="page=='e'" [routerLink]="['/edit-slot/', 'e'+slot.roomID+slot.startTime]">Edit | </a>
-        <a *ngIf="page=='s'" [routerLink]="['/edit-slot/', 's'+slot.roomID+slot.startTime]">Cancel booking | </a>
-        <a *ngIf="page=='e'" [routerLink]="" (click)="deleteSlot(slot.roomID, slot.startTime)">Delete</a>
+        <a class="btn-sm btn-success" *ngIf="page=='e'" [routerLink]="['/edit-slot/', 'e'+slot.roomID+slot.startTime]">Edit</a>
+        <a class="btn-sm btn-warning" *ngIf="page=='s'" [routerLink]="['/edit-slot/', 's'+slot.roomID+slot.startTime]">Cancel booking</a>
+        <a class="btn-sm btn-danger" *ngIf="page=='e'" [routerLink]="" (click)="deleteSlot(slot.roomID, slot.startTime)">Delete</a>
       </td>
     </tr>
     <tr *ngIf="!slotList" && slotList.length=0>

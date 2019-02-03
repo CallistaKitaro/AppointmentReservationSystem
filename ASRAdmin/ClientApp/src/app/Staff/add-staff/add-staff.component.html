@@ -5,35 +5,35 @@
 <form [formGroup]="form"
       (ngSubmit)="save()">
   
-    <div class="form-group row">
+    <div class="form-group">
       <label for="staffID">Staff ID</label>
       <div><input type="text" name="staffID" id="staffID" formControlName="staffID"></div>
       <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
         Staff ID should with e and followed with 5 numbers
       </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group">
       <label for="firstName">First Name</label>
       <div><input type="text" name="firstName" id="firstName" formControlName="firstName"></div>
       <div *ngIf="form.get('firstName').hasError('pattern')" class="error">
         Name cannot be numbers.
       </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group">
       <label for="firstName">Last Name</label>
       <div><input type="text" name="lastName" id="lastName" formControlName="lastName"></div>
       <div *ngIf="form.get('lastName').hasError('pattern')" class="error">
         Name cannot be numbers.
       </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group">
       <label for="email">Email</label>
       <div><input type="text" name="email" id="email" formControlName="email"></div>
       <div *ngIf="form.get('email').hasError('pattern')" class="error">
         Staff email should staffID@rmit.edu.au.
       </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group">
       <button type="submit" [disabled]="!form.valid">Save</button>
       <button class="btn" (click)="cancel()">Cancel</button>
     </div>

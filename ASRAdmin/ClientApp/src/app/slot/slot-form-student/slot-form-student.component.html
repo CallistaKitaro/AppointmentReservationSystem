@@ -1,14 +1,16 @@
 <h1>{{title}}</h1>
 
-<p *ngIf="!studentSlots"><em>Please input student ID</em></p>
+<h2 *ngIf="!studentSlots">Please input student ID</h2>
 
 <form [formGroup]="form"
       (ngSubmit)="getSlots()">
 
   <ul>
     <li>
-      <div>
-        <label for="studentID">Student ID</label>
+      <div class="form-group">
+        <div >
+          <label for="studentID">Student ID</label>
+        </div>
         <input type="text" name="studentID" id="studentID" formControlName="studentID">
         <div *ngIf="form.get('studentID').hasError('pattern')" class="error">
           Student ID should with s and followed with 7 numbers
@@ -16,7 +18,7 @@
       </div>
     </li>
     <li>
-      <div class="form-group row">
+      <div class="form-group">
         <button class="btn" type="submit" [disabled]="!form.valid">Find Slots</button>
       </div>
     </li>
