@@ -18,8 +18,7 @@ Website administrator can help staff and students with using their account. As s
 Web API is used to expose some of the resources available in our database to perform CRUD operation to our database. The benefit of using API to read and make changes to the database instead of making the changes directly is to ensure the extensibility of our application. In the event that the database structure has been changed, the web server do not need to be modified. It also allow multiple applications to communicate information with one another faster, as they do not need to establish connection with the databases. Lastly, it improves data security. Some of the information in the database, such as passwords or social security number should not be exposed to anybody, including the developer. API helps to hide sensitive informations but still allow our application to make the relevant changes in the database.
 
 ## Angular
-You will also need to provide an analytical justification of the advantages offered 
-using Angular
+You will also need to provide an analytical justification of the advantages offered using Angular and webAPI
 
 ## Social media login
 In this website, we implement Facebook and Google login for both student and staff. The advantage of using these social media login is so that users can ensure that their passwords can be stored more securely. Big companies such as Google and Facebook invest more in user security, making it a much better choice to store the password than in a local database. The additional benefit for user is that they do not need to create a new password for each and every new websites. This helps to lighten users' mental load and reduce the possibility of the users being locked out of their account permanently.
