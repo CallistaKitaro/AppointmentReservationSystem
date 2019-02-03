@@ -240,11 +240,12 @@ namespace ASR.Controllers
         
         public async Task<IActionResult> RoomAvailability(string id, string searchDate)
         {
+            ViewBag.Message = "";
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             ViewBag.Message = "";
             ViewBag.id = id;
             var staffId = id.Substring(0, 6);

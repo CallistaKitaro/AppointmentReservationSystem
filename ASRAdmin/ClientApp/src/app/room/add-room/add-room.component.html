@@ -1,0 +1,22 @@
+<header>
+  <h2>{{title}} Room to ASR System</h2>
+</header>
+
+<section>
+  <form [formGroup]="form"
+        (ngSubmit)="save()">
+
+    <div class="form-group">
+      <div><input type="hidden" name="roomID" id="roomID" formControlName="roomID"></div>
+      <label for="roomName">Room Name</label>
+      <div><input type="text" name="roomName" id="roomName" formControlName="roomName"></div>
+      <div *ngIf="form.get('roomName').hasError('pattern')" class="error">
+        Name cannot be numbers.
+      </div>
+    </div>
+    <div class="form-group ">
+      <button type="submit" [disabled]="!form.valid">Save</button>
+      <button class="btn" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</section>

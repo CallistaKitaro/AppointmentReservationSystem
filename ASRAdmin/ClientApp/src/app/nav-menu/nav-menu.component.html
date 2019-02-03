@@ -1,0 +1,63 @@
+<div class='main-nav'>
+    <div class='navbar navbar-inverse'>
+        <div class='navbar-header'>
+            <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse' [attr.aria-expanded]='isExpanded' (click)='toggle()'>
+                <span class='sr-only'>Toggle navigation</span>
+                <span class='icon-bar'></span>
+                <span class='icon-bar'></span>
+                <span class='icon-bar'></span>
+            </button>
+            <a class='navbar-brand' [routerLink]='["/"]'>ASRAdmin</a>
+        </div>
+        <div class='clearfix'></div>
+        <div class='navbar-collapse collapse' [ngClass]='{ "in": isExpanded }'>
+          <ul class='nav navbar-nav'>
+            <li [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+              <a [routerLink]='["/"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-home'></span> Home
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/fetch-room"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-education'></span> Room
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/add-room"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Add Room
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/fetch-student"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-education'></span> Student
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/add-student"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Add Student
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/fetch-staff"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-education'></span> Staff
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/add-staff"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Add Staff
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/slot-form"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Slot Staff
+              </a>
+            </li>
+            <li [routerLinkActive]='["link-active"]'>
+              <a [routerLink]='["/slot-form-student"]' (click)='collapse()'>
+                <span class='glyphicon glyphicon-th-list'></span> Slot Student 
+              </a>
+            </li>
+          </ul>
+        </div>
+    </div>
+</div>

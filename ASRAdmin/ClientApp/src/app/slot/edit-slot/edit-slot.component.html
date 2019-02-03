@@ -1,0 +1,37 @@
+<header>
+  <h2>Edit {{title}} Slot </h2>
+</header>
+
+<form [formGroup]="form"
+      (ngSubmit)="update()">
+
+  <div class="form-group">
+    <label for="roomID">Room ID</label>
+    <div><input type="text" name="roomID" id="roomID" formControlName="roomID"></div>
+    <div><input type="hidden" name="room" id="room" formControlName="room"></div>
+  </div>
+  <div class="form-group">
+    <label for="startTime">Start Time</label>
+    <div><input type="text" name="startTime" id="startTime" formControlName="startTime"></div>
+  </div>
+  <div class="form-group">
+    <label for="staffID">Start ID</label>
+    <div><input type="text" name="staffID" id="staffID" formControlName="staffID"></div>
+    <div><input type="hidden" name="staff" id="staff" formControlName="staff"></div>
+    <div *ngIf="form.get('staffID').hasError('pattern')" class="error">
+      StaffID should start with 'e' followed by 5 number.
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="studentID">Student ID</label>
+    <div><input type="text" name="studentID" id="studentID" formControlName="studentID"></div>
+    <div><input type="hidden" name="student" id="student" formControlName="student"></div>
+    
+  </div>
+  <div class="form-group">
+    <button *ngIf="page=='e'" type="submit" >Update booking</button>
+    <button *ngIf="page=='s'" type="submit" >Cancel booking</button>
+    <button class="btn" (click)="return()">Return</button>
+  </div>
+</form>
+
