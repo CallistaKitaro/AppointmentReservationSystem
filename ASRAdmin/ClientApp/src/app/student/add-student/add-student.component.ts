@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StudentService } from '../../services/student.service';
-//import { Student } from '../../Models/student';
 import { Router, ActivatedRoute } from "@angular/router";
-import { error } from 'util';
 
 @Component({
     selector: 'add-student',

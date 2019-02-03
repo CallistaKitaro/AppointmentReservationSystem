@@ -47,6 +47,7 @@ export class AddRoomComponent {
       return;
     }
 
+    //Check if this Add room or Edit page
     if (this.title === "Add") {
 
       this._roomService.getRooms().subscribe(roomData => this.totalRoom = roomData);
@@ -54,11 +55,12 @@ export class AddRoomComponent {
 
       let newRoom = new Room();
       newRoom.roomID = String(sum + 1);
-      newRoom.roomName = this.form.get('roomName').value;
+      newRoom.roomName = (this.form.get('roomName').value).toUpperCase();
 
       this._roomService.saveRoom(newRoom).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);
       }, error => this.errorMessage = error);
+      
     } else if (this.title === "Edit") {
       this._roomService.updateRoom(this.roomID, this.form.value).subscribe((data) => {
         this._router.navigate(["/fetch-room"]);

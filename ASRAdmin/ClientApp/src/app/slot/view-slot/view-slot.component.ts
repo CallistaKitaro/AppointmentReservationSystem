@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Pipe } from '@Angular/core';
 import { SlotService } from '../../services/slot.service';
 import { Slot } from '../../Models/slot';
 import { Router, ActivatedRoute } from "@angular/router";

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-
 import { ActivatedRoute, Router } from '@angular/router';
-import { error } from 'protractor';
 import { SlotService } from '../../services/slot.service';
 import { Slot } from '../../Models/slot';
 
@@ -27,6 +25,8 @@ export class EditSlotComponent {
     if (this._avRoute.snapshot.paramMap.get("id")) {
       this.id = this._avRoute.snapshot.paramMap.get("id");
     }
+
+    // Set the form
     this.form = new FormGroup({
       roomID: new FormControl(''),
       room: new FormControl(''),
@@ -58,11 +58,7 @@ export class EditSlotComponent {
   }
 
   update() {
-
-    //if (!this.form.valid) {
-    //  return;
-    //}
-
+    
     // save the new data and return to each staff page
     if (this.page == "e") {
       var staffId = this.form.get('staffID').value + 'All';
@@ -77,19 +73,30 @@ export class EditSlotComponent {
         updatedSlot.studentID = this.form.get('studentID').value;
       }
 
+      console.log(this.roomId);
+      console.log(this.slotTime);
+      console.log(updatedSlot);
+
       this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", staffId]);
       }, error => this.errorMessage = error);
     }
+
      // save the new data and return to each student page
     else if (this.page == "s") {
       var studentId = this.form.get('studentID').value;
 
-      this._slotService.updateSlot(this.roomId, this.slotTime, this.form.value).subscribe((data) => {
+      let updatedSlot: Slot = new Slot();
+      updatedSlot.roomID = this.form.get('roomID').value;
+      updatedSlot.startTime = this.form.get('startTime').value;
+      updatedSlot.staffID = this.form.get('staffID').value;
+
+      this._slotService.updateSlot(this.roomId, this.slotTime, updatedSlot).subscribe((data) => {
         this._router.navigate(["/view-slot", studentId]);
       }, error => this.errorMessage = error)
     }
   }
+
 
   return() {
 

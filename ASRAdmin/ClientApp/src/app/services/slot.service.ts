@@ -53,7 +53,7 @@ export class SlotService {
       .map((response: Response) => response.json()).catch(this.errorHandler)
   }
 
-  saveStudent(slot)
+  saveSlot(slot)
   {
     return this._http.post(this.baseUrl + 'Slot/', slot)
       .map((response: Response) => response.json()).catch(this.errorHandler)

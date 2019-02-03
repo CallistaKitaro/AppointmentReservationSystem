@@ -186,8 +186,6 @@ namespace ASR.Controllers
                 }
             }
 
-
-
             if (!String.IsNullOrEmpty(searchDate)) //If searching for a specific date
             {
                 DateTime selectDate = Convert.ToDateTime(searchDate);
@@ -235,7 +233,7 @@ namespace ASR.Controllers
             int pageSize = 2;
             return View(await PaginatedList<Slot>.CreateAsync(staffSlots, page ?? 1, pageSize));
 
-            //return View(staffSlots);
+      
         }
         
         public async Task<IActionResult> RoomAvailability(string id, string searchDate)
