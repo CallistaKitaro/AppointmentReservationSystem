@@ -39,7 +39,7 @@
                                 Room Name
                             </th>
                             <th>
-                                Start Time
+                                Date
                             </th>
                             <th>Time</th>
                             <th>
@@ -65,7 +65,7 @@
                                     <p>@Html.DisplayFor(modelItem => item.StaffID)</p>
                                     <p>@Html.DisplayFor(modelItem => item.Staff.FirstName) @Html.DisplayFor(modelItem => item.Staff.LastName)</p>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @Html.ActionLink("Cancel", "CancelBooking", new { id = @ViewBag.id, roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>

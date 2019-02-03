@@ -80,14 +80,31 @@ namespace ASR.Controllers
             List<Slot> allSlots = new List<Slot>();
             allSlots = await GetAllSlots();
 
-            if (!String.IsNullOrEmpty(searchDate)) //If searching for a specific date
+            if (!String.IsNullOrEmpty(searchDate))//If searching for a specific date
             {
                 DateTime selectDate = Convert.ToDateTime(searchDate);
-                allSlots = allSlots.Where(s => s.StartTime.Date == selectDate.Date).ToList();
+                if (selectDate.Date == DateTime.Now.Date)
+                {
+                    allSlots = allSlots.Where(s => (s.StartTime.Date == selectDate.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+                }
+                else
+                {
+                    allSlots = allSlots.Where(s => (s.StartTime.Date == selectDate.Date)).ToList();
+                }
             }
-            else // If not looking for specific date, look for future booking slots
+            else // If not looking for specific date, look for all future bookings
             {
-                allSlots = allSlots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+                allSlots = allSlots.Where(s => s.StartTime.Date >= DateTime.Now.Date).ToList();
+                List<Slot> slotToremove = new List<Slot>();
+                foreach (var item in allSlots)
+                {
+                    // Removing today's past bookings
+                    if ((item.StartTime.Date == DateTime.Now.Date) && (item.StartTime.Hour < DateTime.Now.Hour))
+                    {
+                        slotToremove.Add(item);
+                    }
+                }
+                allSlots = allSlots.Except(slotToremove).OrderBy(x => x.StartTime).ToList();
             }
 
             if (allSlots == null || !allSlots.Any())
@@ -130,9 +147,22 @@ namespace ASR.Controllers
             List<Slot> slots = await GetAllSlots();
             var staffId = slots.Select(s => s.StaffID).Distinct().OrderBy(s => s);
             
-            var Slots = slots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour));
+            var Slots = slots.Where(s => s.StartTime.Date >= DateTime.Now.Date).ToList();
+
+            List<Slot> slotToremove = new List<Slot>();
+            foreach (var item in slots)
+            {
+                // Removing today's past bookings
+                if ((item.StartTime.Date == DateTime.Now.Date) && (item.StartTime.Hour < DateTime.Now.Hour))
+                {
+                    slotToremove.Add(item);
+                }
+            }
+            Slots = Slots.Except(slotToremove).OrderBy(x => x.StartTime).ToList();
+            
             if (!string.IsNullOrEmpty(searchStaff))
-                Slots = Slots.Where(s => ((s.StaffID == searchStaff)));
+                Slots = Slots.Where(s => ((s.StaffID == searchStaff))).ToList();
+            
 
             if (Slots == null || !Slots.Any())
             {
@@ -142,7 +172,7 @@ namespace ASR.Controllers
             return View(new SlotStaffViewModel
             {
                 staffID = new SelectList(staffId.ToList()),
-                Slots = Slots.ToList()
+                Slots = Slots
             });
         }
         
@@ -264,11 +294,29 @@ namespace ASR.Controllers
             if (!String.IsNullOrEmpty(searchDate))//If searching for a specific date
             {
                 DateTime selectDate = Convert.ToDateTime(searchDate);
-                studentSlots = studentSlots.Where(s => (s.StartTime.Date == selectDate.Date)).ToList();
+
+                if (selectDate.Date == DateTime.Now.Date)
+                {
+                    studentSlots = studentSlots.Where(s => (s.StartTime.Date == selectDate.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+                }
+                else
+                {
+                    studentSlots = studentSlots.Where(s => (s.StartTime.Date == selectDate.Date)).ToList();
+                }
             }
             else // If not looking for specific date, look for all future bookings
             {
-                slots = slots.Where(s => (s.StartTime.Date >= DateTime.Now.Date) && (s.StartTime.Hour > DateTime.Now.Hour)).ToList();
+                slots = slots.Where(s => s.StartTime.Date >= DateTime.Now.Date).ToList();
+                List<Slot> slotToremove = new List<Slot>();
+                foreach (var item in slots)
+                {
+                    // Removing today's past bookings
+                    if ((item.StartTime.Date == DateTime.Now.Date) && (item.StartTime.Hour < DateTime.Now.Hour))
+                    {
+                        slotToremove.Add(item);
+                    }
+                }
+                slots = slots.Except(slotToremove).OrderBy(x => x.StartTime).ToList();
             }
 
             if (studentSlots == null || !studentSlots.Any())

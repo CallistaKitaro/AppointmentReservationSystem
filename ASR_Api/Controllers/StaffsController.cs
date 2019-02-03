@@ -140,14 +140,20 @@ namespace ASR_Api.Controllers
         [HttpGet("{id}/GetSlots")]
         public async Task<IActionResult> GetSlots(string id)
         {
-            var staff = await _context.Staff.Include(s => s.StaffSlots)
-                .FirstOrDefaultAsync(s => s.StaffID == id);
-            if (staff == null)
+            //var staff = await _context.Staff.Include(s => s.StaffSlots)
+            //    .FirstOrDefaultAsync(s => s.StaffID == id);
+
+            var StaffSlots = await _context.Slot.Include(s => s.Room)
+                        .Include(s => s.Staff)
+                        .Include(s => s.Student)
+                        .Where(s => s.StaffID == id).ToListAsync();
+
+            if (StaffSlots == null)
             {
                 return NotFound();
             }
 
-            return Ok(staff.StaffSlots);
+            return Ok(StaffSlots);
         }
 
         private bool StaffExists(string id)

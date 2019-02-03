@@ -27,7 +27,7 @@
 
         @if (ViewBag.Message != "")
         {
-            <h2>@ViewBag.Message</h2>
+            <h2 class="text-danger">@ViewBag.Message</h2>
         }
         else
         {
@@ -39,10 +39,14 @@
                                 Room Name
                             </th>
                             <th>
-                                Date
+                                StartTime
                             </th>
-                            <th>Time </th>
-                            <th></th>
+                            <th>
+                                Time
+                            </th>
+                            <th>
+                                Booking
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,33 +62,33 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
                                 </td>
-
-                                @if (item.StudentID != null)
-                                {
-                                    <td></td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">
-                                        @Html.ActionLink("Delete", "SlotDelete", new { roomid = item.RoomID, startTime = item.StartTime.ToString("dd/MM/yyyy HH:mm") }, new { @class = "btn btn-danger " })
-                                    </td>
-                                }
+                                <td>
+                                    @if (item.StudentID != null)
+                                    {
+                                        <p>@Html.DisplayFor(modelItem => item.StudentID)</p>
+                                        <p>@Html.DisplayFor(modelItem => item.Student.FirstName)</p>
+                                    }
+                                    else
+                                    {
+                                        <p>No booking</p>
+                                        <p></p>
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-
                 @{
                     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
                     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
                 }
 
-                <a asp-action="ListSlots"
+                <a asp-action="ListSchedules"
                    asp-route-page="@(Model.PageIndex - 1)"
                    class="btn btn-primary @prevDisabled">
                     Previous
                 </a>
-                <a asp-action="ListSlots"
+                <a asp-action="ListSchedules"
                    asp-route-page="@(Model.PageIndex + 1)"
                    class="btn btn-primary @nextDisabled">
                     Next
