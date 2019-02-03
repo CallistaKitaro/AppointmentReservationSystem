@@ -41,8 +41,4 @@ export class SlotFormComponent {
     
   }
 
-  cancel() {
-    this._router.navigate(["/slot-staff"]);
-  }
-
 }

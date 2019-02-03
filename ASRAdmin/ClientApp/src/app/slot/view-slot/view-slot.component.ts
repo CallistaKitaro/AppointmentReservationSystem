@@ -12,13 +12,15 @@ import { DatePipe } from '@angular/common';
 })
 /** view-slot component*/
 export class ViewSlotComponent implements OnInit {
-  title: string = "";
+  title: string = ""; 
+  page: string = ""; // to navigate with page the edit
   slotList: Slot[];
   id: string;
   option: string;
 
   constructor(private _slotService: SlotService, private _router: Router, private _avRoute: ActivatedRoute)
   {
+    this.title = "";
     if (this._avRoute.snapshot.paramMap.get("id"))
     {
       this.id = this._avRoute.snapshot.paramMap.get("id");
@@ -31,16 +33,18 @@ export class ViewSlotComponent implements OnInit {
     {
       if (this.id.substring(0, 1) === 'e') {
         this.option = this.id.substring(6);
-        this.title = "Staff's Slots"
+        this.title = "Staff's Slots";
+        this.page = "e";
         if (this.option == "All") {
           this.getStaffSlot(this.id.substring(0,6));
         } else if (this.option == "Booked") {
           this.getBookedStaffSlot(this.id.substring(0,6));
         }
         
-      } else if (this.id.substring(0, 1) === 's')
+      } else if (this.id.substring(0, 1) == 's')
       {
-        this.title = "Student's Slots"
+        this.title = "Student's Slots";
+        this.page = "s";
         this._slotService.getStudentSlots(this.id).subscribe(slotData => this.slotList = slotData);
       }
     }

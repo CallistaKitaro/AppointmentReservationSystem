@@ -21,7 +21,8 @@ import { FetchStaffComponent } from './staff/fetch-staff/fetch-staff.component';
 import { AddStaffComponent } from './staff/add-staff/add-staff.component';
 import { SlotFormComponent } from './slot/slot-form/slot-form.component';
 import { ViewSlotComponent } from './slot/view-slot/view-slot.component';
-
+import { EditSlotComponent } from './slot/edit-slot/edit-slot.component';
+import { SlotFormStudentComponent } from './slot/slot-form-student/slot-form-student.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,9 @@ import { ViewSlotComponent } from './slot/view-slot/view-slot.component';
     FetchStaffComponent,
     AddStaffComponent,
     SlotFormComponent,
+    SlotFormStudentComponent,
     ViewSlotComponent,
+    EditSlotComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -49,12 +52,14 @@ import { ViewSlotComponent } from './slot/view-slot/view-slot.component';
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'fetch-student', component: FetchStudentComponent },
       { path: 'add-student', component: AddStudentComponent },
-      { path: "add-student/:id", component: AddStudentComponent },
+      { path: 'add-student/:id', component: AddStudentComponent },
       { path: 'fetch-staff', component: FetchStaffComponent },
       { path: 'add-staff', component: AddStaffComponent },
-      { path: "add-staff/:id", component: AddStaffComponent },
-      { path: "slot-form", component: SlotFormComponent },
-      { path: "view-slot/:id", component: ViewSlotComponent },
+      { path: 'add-staff/:id', component: AddStaffComponent },
+      { path: 'slot-form', component: SlotFormComponent },
+      { path: 'slot-form-student', component: SlotFormStudentComponent},
+      { path: 'view-slot/:id', component: ViewSlotComponent },
+      { path: 'edit-slot/:id', component: EditSlotComponent },
     ])
   ],
   providers: [StudentService, StaffService, SlotService],

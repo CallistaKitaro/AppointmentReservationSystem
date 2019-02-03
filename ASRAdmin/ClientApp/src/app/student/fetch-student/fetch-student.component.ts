@@ -37,9 +37,4 @@ export class FetchStudentComponent implements OnInit {
 
   }
 
-  //editStudent(stdID)
-  //{
-  //  this._router.navigate(['/add-student/', stdID])
-  //}
-
 }
